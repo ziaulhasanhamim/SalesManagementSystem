@@ -1,0 +1,9 @@
+﻿@page "/"
+@namespace SalesManagementSystem.Server.Pages
+@using SalesManagementSystem.Blazor
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "_Layout";
+}
+
+<component type="typeof(App)" render-mode="ServerPrerendered" />

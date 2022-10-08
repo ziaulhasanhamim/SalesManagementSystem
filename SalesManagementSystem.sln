@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalesManagementSystem.Blazor", "SalesManagementSystem.Blazor\SalesManagementSystem.Blazor.csproj", "{9369CECD-BD51-49A8-B35E-86984DC854DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalesManagementSystem.Server", "SalesManagementSystem.Server\SalesManagementSystem.Server.csproj", "{C11552DB-EC4E-4932-A3C7-AE0009D2E4D0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9369CECD-BD51-49A8-B35E-86984DC854DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9369CECD-BD51-49A8-B35E-86984DC854DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9369CECD-BD51-49A8-B35E-86984DC854DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9369CECD-BD51-49A8-B35E-86984DC854DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C11552DB-EC4E-4932-A3C7-AE0009D2E4D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C11552DB-EC4E-4932-A3C7-AE0009D2E4D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C11552DB-EC4E-4932-A3C7-AE0009D2E4D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C11552DB-EC4E-4932-A3C7-AE0009D2E4D0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

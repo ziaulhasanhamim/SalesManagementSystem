@@ -1,0 +1,19 @@
+@inherits LayoutComponentBase
+
+<MudThemeProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+
+<MudLayout>
+    <MudAppBar>
+        Sells Management System
+    </MudAppBar>
+    <MudDrawer Open="true">
+        <MudNavMenu>
+`           <MudNavLink Href="/" Match="NavLinkMatch.All">Dashboard</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+</MudLayout>
