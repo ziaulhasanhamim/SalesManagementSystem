@@ -6,14 +6,26 @@
 
 <MudLayout>
     <MudAppBar>
-        Sells Management System
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="DrawerToggle" />
+        <MudText Typo="Typo.h4">Sells Management System</MudText>
     </MudAppBar>
-    <MudDrawer Open="true">
+    <MudDrawer Elevation="1" ClipMode="DrawerClipMode.Always" Open="_drawerOpen" DisableOverlay="true">
         <MudNavMenu>
-`           <MudNavLink Href="/" Match="NavLinkMatch.All">Dashboard</MudNavLink>
+`           <MudNavLink Href="/" Match="NavLinkMatch.All" IconColor="Color.Primary" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
         </MudNavMenu>
     </MudDrawer>
     <MudMainContent>
-        @Body
+        <MudContainer MaxWidth="MaxWidth.Large">
+            @Body
+        </MudContainer>
     </MudMainContent>
 </MudLayout>
+
+@code {
+    bool _drawerOpen = false;
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+}
