@@ -9,20 +9,29 @@ public sealed class SalesEntry
     public Guid Id { get; set; }
 
     [Required]
-    public string ProductName { get; set; } = "";
-
-    [Required]
     public int Quantity { get; set; }
 
     [Required]
-    public int Price { get; set; }
+    public int SoldPrice { get; set; }
 
     [Required]
     public DateTime TransactionTime { get; set; }
 
     [Required]
-    public Guid SalesGroupId { get; set; }
+    public Guid PaymentMethodId { get; set; }
 
-    [ForeignKey(nameof(SalesGroupId))]
-    public SalesGroup? SalesGroup { get; set; }
+    [ForeignKey(nameof(PaymentMethodId))]
+    public PaymentMethod? PaymentMethod { get; set; }
+
+    [Required]
+    public Guid ProductId { get; set; }
+
+    [ForeignKey(nameof(ProductId))]
+    public Product? Product { get; set; }
+
+    [Required]
+    public Guid? CustomerId { get; set; }
+
+    [ForeignKey(nameof(CustomerId))]
+    public Customer? Customer { get; set; }
 }

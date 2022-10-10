@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SalesManagementSystem.Server.Persistence;
@@ -11,10 +12,11 @@ using SalesManagementSystem.Server.Persistence;
 namespace SalesManagementSystem.Server.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
+    [Migration("20221010024741_InitialCreate")]
     [Open]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
