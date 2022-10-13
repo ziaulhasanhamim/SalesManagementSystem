@@ -59,8 +59,9 @@ public static class CustomerEndpoints
     public static async Task<IResult> Get(Guid id, AppDbContext dbContext, CancellationToken ct)
     {
         var customer = await dbContext.Customers
+            .Where(c => c.Id == id)
             .ProjectToType<CustomerRes>()
-            .FirstOrDefaultAsync(c => c.Id == id, ct);
+            .FirstOrDefaultAsync(ct);
         return customer switch
         {
             not null => Results.Ok(customer),

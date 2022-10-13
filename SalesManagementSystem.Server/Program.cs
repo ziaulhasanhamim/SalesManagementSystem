@@ -35,6 +35,7 @@ app.MapBlazorHub();
 
 ProductEndpoints.Map(app);
 CustomerEndpoints.Map(app);
+PaymentMethodEndpoints.Map(app);
 
 app.MapFallbackToPage("/_Host");
 

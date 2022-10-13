@@ -47,8 +47,9 @@ public static class ProductEndpoints
     public static async Task<IResult> Get(Guid id, AppDbContext dbContext, CancellationToken ct)
     {
         var product = await dbContext.Products
+            .Where(p => p.Id == id)
             .ProjectToType<ProductRes>()
-            .FirstOrDefaultAsync(p => p.Id == id, ct);
+            .FirstOrDefaultAsync(ct);
         return product switch
         {
             not null => Results.Ok(product),
