@@ -1,6 +1,6 @@
 namespace SalesManagementSystem.Server.ApiContracts;
 
-public record ValidationErrorRes(
+public sealed record ValidationErrorRes(
     IDictionary<string, string[]> Errors,
     string Message = "Provided request data was not valid")
 {

@@ -9,6 +9,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="BetterErrors" Version="1.2.0" />
+		<PackageReference Include="libphonenumber-csharp" Version="8.12.56" />
 		<PackageReference Include="Mapster" Version="7.3.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.9">
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

@@ -29,7 +29,6 @@ public sealed class SalesEntry
     [ForeignKey(nameof(ProductId))]
     public Product? Product { get; set; }
 
-    [Required]
     public Guid? CustomerId { get; set; }
 
     [ForeignKey(nameof(CustomerId))]

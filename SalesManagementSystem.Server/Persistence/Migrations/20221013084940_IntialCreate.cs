@@ -5,17 +5,21 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SalesManagementSystem.Server.Persistence.Migrations
 {
-    public partial class InitialCreate : Migration
+    [Open]
+    public partial class IntialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterDatabase()
+                .Annotation("Npgsql:PostgresExtension:pg_trgm", ",,");
+
             migrationBuilder.CreateTable(
                 name: "Customers",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    PhoneNumer = table.Column<string>(type: "text", nullable: false)
+                    PhoneNumber = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -58,7 +62,7 @@ namespace SalesManagementSystem.Server.Persistence.Migrations
                     TransactionTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     PaymentMethodId = table.Column<Guid>(type: "uuid", nullable: false),
                     ProductId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false)
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -67,8 +71,7 @@ namespace SalesManagementSystem.Server.Persistence.Migrations
                         name: "FK_SalesEntries_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_SalesEntries_PaymentMethods_PaymentMethodId",
                         column: x => x.PaymentMethodId,
@@ -84,6 +87,32 @@ namespace SalesManagementSystem.Server.Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Customers_Name",
+                table: "Customers",
+                column: "Name")
+                .Annotation("Npgsql:IndexMethod", "GIN")
+                .Annotation("Npgsql:IndexOperators", new[] { "gin_trgm_ops" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Customers_PhoneNumber",
+                table: "Customers",
+                column: "PhoneNumber");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Customers_PhoneNumber_GIN",
+                table: "Customers",
+                column: "PhoneNumber")
+                .Annotation("Npgsql:IndexMethod", "GIN")
+                .Annotation("Npgsql:IndexOperators", new[] { "gin_trgm_ops" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_Name",
+                table: "Products",
+                column: "Name")
+                .Annotation("Npgsql:IndexMethod", "GIN")
+                .Annotation("Npgsql:IndexOperators", new[] { "gin_trgm_ops" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SalesEntries_CustomerId",
                 table: "SalesEntries",
                 column: "CustomerId");
@@ -97,6 +126,11 @@ namespace SalesManagementSystem.Server.Persistence.Migrations
                 name: "IX_SalesEntries_ProductId",
                 table: "SalesEntries",
                 column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SalesEntries_TransactionTime",
+                table: "SalesEntries",
+                column: "TransactionTime");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

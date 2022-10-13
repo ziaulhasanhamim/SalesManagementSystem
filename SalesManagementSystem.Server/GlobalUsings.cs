@@ -6,3 +6,4 @@ global using Nopen.NET;
 global using Mapster;
 global using MiniValidation;
 global using SalesManagementSystem.Server.ApiContracts;
+global using SalesManagementSystem.Server.Helpers;

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using SalesManagementSystem.Server;
+using SalesManagementSystem.Server.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +12,7 @@ builder.Services.AddDbContext<AppDbContext>(
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options => options.CustomSchemaIds(t => t.ToString()));
 builder.Services.AddMudServices();
 
 MapsterConfigurer.Configure();
@@ -31,6 +32,10 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.MapBlazorHub();
+
+ProductEndpoints.Map(app);
+CustomerEndpoints.Map(app);
+
 app.MapFallbackToPage("/_Host");
 
 app.Run();

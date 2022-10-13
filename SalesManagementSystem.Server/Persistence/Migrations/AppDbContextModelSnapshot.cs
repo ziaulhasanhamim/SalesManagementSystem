@@ -11,7 +11,6 @@ using SalesManagementSystem.Server.Persistence;
 namespace SalesManagementSystem.Server.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Open]
     partial class AppDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -21,6 +20,7 @@ namespace SalesManagementSystem.Server.Persistence.Migrations
                 .HasAnnotation("ProductVersion", "6.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "pg_trgm");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("SalesManagementSystem.Server.Persistence.Entities.Customer", b =>
@@ -33,11 +33,23 @@ namespace SalesManagementSystem.Server.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("PhoneNumer")
+                    b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Name"), "GIN");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("Name"), new[] { "gin_trgm_ops" });
+
+                    b.HasIndex(new[] { "PhoneNumber" }, "IX_Customers_PhoneNumber");
+
+                    b.HasIndex(new[] { "PhoneNumber" }, "IX_Customers_PhoneNumber_GIN");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex(new[] { "PhoneNumber" }, "IX_Customers_PhoneNumber_GIN"), "GIN");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex(new[] { "PhoneNumber" }, "IX_Customers_PhoneNumber_GIN"), new[] { "gin_trgm_ops" });
 
                     b.ToTable("Customers");
                 });
@@ -75,6 +87,11 @@ namespace SalesManagementSystem.Server.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Name"), "GIN");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("Name"), new[] { "gin_trgm_ops" });
+
                     b.ToTable("Products");
                 });
 
@@ -85,7 +102,6 @@ namespace SalesManagementSystem.Server.Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<Guid?>("CustomerId")
-                        .IsRequired()
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("PaymentMethodId")
@@ -111,6 +127,8 @@ namespace SalesManagementSystem.Server.Persistence.Migrations
 
                     b.HasIndex("ProductId");
 
+                    b.HasIndex("TransactionTime");
+
                     b.ToTable("SalesEntries");
                 });
 
@@ -118,9 +136,7 @@ namespace SalesManagementSystem.Server.Persistence.Migrations
                 {
                     b.HasOne("SalesManagementSystem.Server.Persistence.Entities.Customer", "Customer")
                         .WithMany("Purchases")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CustomerId");
 
                     b.HasOne("SalesManagementSystem.Server.Persistence.Entities.PaymentMethod", "PaymentMethod")
                         .WithMany()
