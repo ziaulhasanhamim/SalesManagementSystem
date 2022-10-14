@@ -34,7 +34,7 @@ public static class SalesEntryEndpoints
             return ValidationErrorRes.BadRequest(errors);
         }
         var salesEntry = req.Adapt<SalesEntry>();
-        salesEntry.TransactionTime = DateTime.UtcNow;
+        salesEntry.SetTransactionTime();
         await dbContext.AddAsync(salesEntry, ct);
         await dbContext.SaveChangesAsync(ct);
         SalesEntryRes res = new(

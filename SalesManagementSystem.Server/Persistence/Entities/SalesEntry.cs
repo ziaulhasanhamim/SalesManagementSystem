@@ -15,7 +15,7 @@ public sealed class SalesEntry
     public int SoldPrice { get; set; }
 
     [Required]
-    public DateTime TransactionTime { get; set; }
+    public DateTime TransactionTime { get; private set; }
 
     [Required]
     public Guid PaymentMethodId { get; set; }
@@ -33,4 +33,6 @@ public sealed class SalesEntry
 
     [ForeignKey(nameof(CustomerId))]
     public Customer? Customer { get; set; }
+
+    public void SetTransactionTime() => TransactionTime = DateTime.UtcNow;
 }
