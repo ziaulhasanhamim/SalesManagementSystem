@@ -20,10 +20,18 @@ public static class ProductEndpoints
         {
             return ValidationErrorRes.BadRequest(vErrors);
         }
+        if (req.SellingPrice < req.BuyingPrice)
+        {
+            Dictionary<string, IEnumerable<string>> errors = new()
+            {
+                [nameof(CreateReq.SellingPrice)] = new[] { "Selling price must be greater than buying price" }
+            };
+            return ValidationErrorRes.BadRequest(errors);
+        }
         var product = req.Adapt<Product>();
         if (await product.IsNameDuplicate(dbContext, ct))
         {
-            Dictionary<string, string[]> errors = new()
+            Dictionary<string, IEnumerable<string>> errors = new()
             {
                 [nameof(CreateReq.Name)] = new[] { "A product with same name exists" }
             };
@@ -85,7 +93,7 @@ public static class ProductEndpoints
         {
             return Results.NoContent();
         }
-        product.StockCount += req.StockCount;
+        product.AddStock(req.StockCount);
         await dbContext.SaveChangesAsync(ct);
         return Results.Ok(product.Adapt<ProductRes>());
     }

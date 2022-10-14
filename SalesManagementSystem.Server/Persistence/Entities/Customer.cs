@@ -23,7 +23,7 @@ public sealed class Customer
         var util = PhoneNumberUtil.GetInstance();
         if (util.TryParse(number, regionCode, out var phoneNumber))
         {
-            PhoneNumber = util.Format(phoneNumber, PhoneNumberFormat.INTERNATIONAL);
+            PhoneNumber = $"+{phoneNumber.CountryCode}{phoneNumber.NationalNumber}";
             return true;
         }
         return false;

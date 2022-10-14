@@ -11,6 +11,10 @@ public static class MapsterConfigurer
             return;
         }
         TypeAdapterConfig.GlobalSettings.Default.ShallowCopyForSameType(true);
+
+        TypeAdapterConfig<PaymentMethod, string>.NewConfig()
+            .MapWith(p => p.Name);
+
         _configured = true;
     }
 }

@@ -12,7 +12,7 @@ using SalesManagementSystem.Server.Persistence;
 namespace SalesManagementSystem.Server.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20221013084940_IntialCreate")]
+    [Migration("20221013150053_IntialCreate")]
     partial class IntialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -77,11 +77,14 @@ namespace SalesManagementSystem.Server.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<int>("BuyingPrice")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Price")
+                    b.Property<int>("SellingPrice")
                         .HasColumnType("integer");
 
                     b.Property<int>("StockCount")

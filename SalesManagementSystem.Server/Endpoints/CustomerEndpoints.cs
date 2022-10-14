@@ -28,7 +28,7 @@ public static class CustomerEndpoints
         };
         if (!customer.TrySetPhoneNumber(req.PhoneNumber, req.RegionCode))
         {
-            Dictionary<string, string[]> errors = new()
+            Dictionary<string, IEnumerable<string>> errors = new()
             {
                 [nameof(CreateReq.PhoneNumber)] = new[] { "Phone number is invalid" }
             };
@@ -36,7 +36,7 @@ public static class CustomerEndpoints
         }
         if (await customer.IsPhoneNumberDuplicate(dbContext, ct))
         {
-            Dictionary<string, string[]> errors = new()
+            Dictionary<string, IEnumerable<string>> errors = new()
             {
                 [nameof(CreateReq.PhoneNumber)] = new[] { "A previous customer already had this phone number" }
             };

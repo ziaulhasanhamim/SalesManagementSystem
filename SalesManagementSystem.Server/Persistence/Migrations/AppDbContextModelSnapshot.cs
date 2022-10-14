@@ -75,11 +75,14 @@ namespace SalesManagementSystem.Server.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<int>("BuyingPrice")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Price")
+                    b.Property<int>("SellingPrice")
                         .HasColumnType("integer");
 
                     b.Property<int>("StockCount")

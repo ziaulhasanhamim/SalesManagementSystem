@@ -18,6 +18,7 @@
 		<PackageReference Include="MiniValidation" Version="0.6.0-pre.20220527.55" />
 		<PackageReference Include="Nopen.NET" Version="1.0.1" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.7" />
+		<PackageReference Include="OneOf" Version="3.0.223" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
 	</ItemGroup>
 

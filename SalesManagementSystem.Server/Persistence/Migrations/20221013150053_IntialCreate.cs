@@ -44,7 +44,8 @@ namespace SalesManagementSystem.Server.Persistence.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    Price = table.Column<int>(type: "integer", nullable: false),
+                    BuyingPrice = table.Column<int>(type: "integer", nullable: false),
+                    SellingPrice = table.Column<int>(type: "integer", nullable: false),
                     StockCount = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>

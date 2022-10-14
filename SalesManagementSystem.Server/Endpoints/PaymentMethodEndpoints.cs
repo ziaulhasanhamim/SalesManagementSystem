@@ -21,7 +21,7 @@ public static class PaymentMethodEndpoints
         var paymentMethod = req.Adapt<PaymentMethod>();
         if (await paymentMethod.IsNameDuplicate(dbContext, ct))
         {
-            Dictionary<string, string[]> errors = new()
+            Dictionary<string, IEnumerable<string>> errors = new()
             {
                 [nameof(CreateReq.Name)] = new[] { "A payment method with same name exists" }
             };

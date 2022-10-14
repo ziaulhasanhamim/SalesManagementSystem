@@ -7,6 +7,11 @@ public sealed class AppDbContext : DbContext
     {
     }
 
+    public DbSet<SalesEntry> SalesEntries { get; set; } = null!;
+    public DbSet<Product> Products { get; set; } = null!;
+    public DbSet<Customer> Customers { get; set; } = null!;
+    public DbSet<PaymentMethod> PaymentMethods { get; set; } = null!;
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.HasPostgresExtension("pg_trgm");
@@ -33,8 +38,9 @@ public sealed class AppDbContext : DbContext
             .HasIndex(s => s.TransactionTime);
     }
 
-    public DbSet<SalesEntry> SalesEntries { get; set; } = null!;
-    public DbSet<Product> Products { get; set; } = null!;
-    public DbSet<Customer> Customers { get; set; } = null!;
-    public DbSet<PaymentMethod> PaymentMethods { get; set; } = null!;
+    public void Detach<T>(T entity)
+        where T : notnull
+    {
+        Entry(entity).State = EntityState.Detached;
+    }
 }
