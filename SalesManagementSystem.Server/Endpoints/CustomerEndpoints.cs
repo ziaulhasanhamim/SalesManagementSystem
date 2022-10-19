@@ -2,7 +2,7 @@ namespace SalesManagementSystem.Server.Endpoints;
 
 using System.Diagnostics.CodeAnalysis;
 using PhoneNumbers;
-using SalesManagementSystem.Server.ApiContracts.Customers;
+using SalesManagementSystem.Contracts.Customers;
 
 public static class CustomerEndpoints
 {
@@ -15,12 +15,12 @@ public static class CustomerEndpoints
         app.MapGet("/api/customers/search-number/{number}", SearchByPhoneNumber);
     }
 
-    public static async ValueTask<IResult> Create(
+    public static async ValueTask<IHttpResult> Create(
         CreateReq req, AppDbContext dbContext, CancellationToken ct)
     {
         if (!MiniValidator.TryValidate(req, out var vErrors))
         {
-            return ValidationErrorRes.BadRequest(vErrors);
+            return HttpHelpers.BadRequest(vErrors);
         }
         Customer customer = new()
         {
@@ -32,7 +32,7 @@ public static class CustomerEndpoints
             {
                 [nameof(CreateReq.PhoneNumber)] = new[] { "Phone number is invalid" }
             };
-            return ValidationErrorRes.BadRequest(errors);
+            return HttpHelpers.BadRequest(errors);
         }
         if (await customer.IsPhoneNumberDuplicate(dbContext, ct))
         {
@@ -40,23 +40,23 @@ public static class CustomerEndpoints
             {
                 [nameof(CreateReq.PhoneNumber)] = new[] { "A previous customer already had this phone number" }
             };
-            return ValidationErrorRes.BadRequest(errors);
+            return HttpHelpers.BadRequest(errors);
         }
         await dbContext.AddAsync(customer, ct);
         await dbContext.SaveChangesAsync(ct);
         var uri = $"/api/customer/{customer.Id}";
-        return Results.Created(uri, customer.Adapt<CustomerRes>());
+        return HttpResults.Created(uri, customer.Adapt<CustomerRes>());
     }
 
-    public static async Task<IResult> GetAll(AppDbContext dbContext, CancellationToken ct)
+    public static async Task<IHttpResult> GetAll(AppDbContext dbContext, CancellationToken ct)
     {
         var customers = await dbContext.Customers
             .ProjectToType<Customer>()
             .ToListAsync(ct);
-        return Results.Ok(customers);
+        return HttpResults.Ok(customers);
     }
 
-    public static async Task<IResult> Get(Guid id, AppDbContext dbContext, CancellationToken ct)
+    public static async Task<IHttpResult> Get(Guid id, AppDbContext dbContext, CancellationToken ct)
     {
         var customer = await dbContext.Customers
             .Where(c => c.Id == id)
@@ -64,12 +64,12 @@ public static class CustomerEndpoints
             .FirstOrDefaultAsync(ct);
         return customer switch
         {
-            not null => Results.Ok(customer),
-            null => Results.NotFound()
+            not null => HttpResults.Ok(customer),
+            null => HttpResults.NotFound()
         };
     }
 
-    public static async Task<IResult> SearchByPhoneNumber(
+    public static async Task<IHttpResult> SearchByPhoneNumber(
         string number,
         AppDbContext dbContext,
         CancellationToken ct,
@@ -80,10 +80,10 @@ public static class CustomerEndpoints
             .Take(count)
             .ProjectToType<CustomerRes>()
             .ToListAsync(ct);
-        return Results.Ok(customers);
+        return HttpResults.Ok(customers);
     }
 
-    public static async Task<IResult> SearchByName(
+    public static async Task<IHttpResult> SearchByName(
         string nameText,
         AppDbContext dbContext,
         CancellationToken ct,
@@ -94,6 +94,6 @@ public static class CustomerEndpoints
             .Take(count)
             .ProjectToType<CustomerRes>()
             .ToListAsync(ct);
-        return Results.Ok(customers);
+        return HttpResults.Ok(customers);
     }
 }

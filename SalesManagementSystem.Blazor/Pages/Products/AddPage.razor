@@ -1,0 +1,68 @@
+@page "/products/add"
+
+<PageTitle>Add new product</PageTitle>
+
+<MudText Typo="Typo.h4" Class="mt-2 mb-3" >Add new product</MudText>
+
+<EditForm EditContext="_formCtx" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <MudGrid>
+        @if (_loading)
+        {
+            <MudProgressLinear Color="Color.Secondary" Indeterminate="true" />
+        }
+        <MudItem xs="12" sm="12">
+            <MudCard>
+                <MudCardContent>
+                    <MudTextField 
+                        Label="Name" 
+                        HelperText="min. 3 characters" 
+                        @bind-Value="_input.Name" 
+                        For="() => _input.Name" />
+
+                    <MudNumericField
+                        Label="Buying Price"
+                        HelperText="Price that the product was bought"
+                        Class="mt-3" 
+                        Min="1"
+                        Max="@int.MaxValue"
+                        @bind-Value="_input.BuyingPrice" 
+                        For="() => _input.BuyingPrice" />
+
+                    <MudNumericField 
+                        Label="Selling Price" 
+                        HelperText="Price that the product is expected to be sold" 
+                        Class="mt-3"
+                        Min="1"
+                        Max="@int.MaxValue"
+                        @bind-Value="_input.SellingPrice"
+                        For="@(() => _input.SellingPrice)" />
+
+                    <MudNumericField 
+                        Label="Initial Stock" 
+                        HelperText="Number of products available to sell" 
+                        Class="mt-3"
+                        Min="0"
+                        Max="@int.MaxValue"
+                        @bind-Value="_input.StockCount" 
+                        For="@(() => _input.StockCount)" />
+
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton 
+                        ButtonType="ButtonType.Submit" 
+                        Variant="Variant.Filled" 
+                        Color="Color.Primary"
+                        Class="ml-auto">
+                        Add
+                    </MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+        <MudItem xs="12">
+            <MudText Typo="Typo.body2" Align="Align.Center">
+                Fill out the form correctly to add a product
+            </MudText>
+        </MudItem>
+    </MudGrid>
+</EditForm>

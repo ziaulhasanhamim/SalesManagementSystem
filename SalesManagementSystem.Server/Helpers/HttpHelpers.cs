@@ -1,16 +1,14 @@
-namespace SalesManagementSystem.Server.ApiContracts;
+namespace SalesManagementSystem.Server.Helpers;
 
-public sealed record ValidationErrorRes(
-    IDictionary<string, IEnumerable<string>> Errors,
-    string Message = "Provided request data was not valid")
+public static class HttpHelpers
 {
-    public static IResult BadRequest(
+    public static IHttpResult BadRequest(
         IDictionary<string, IEnumerable<string>> errors,
         string message = "Provided request data was not valid"
     ) =>
-        Results.BadRequest(new ValidationErrorRes(errors, message));
+        HttpResults.BadRequest(new ValidationErrorRes(errors, message));
 
-    public static IResult BadRequest(
+    public static IHttpResult BadRequest(
         IDictionary<string, string[]> errors,
         string message = "Provided request data was not valid")
     {
@@ -22,7 +20,7 @@ public sealed record ValidationErrorRes(
         return BadRequest(newErrors, message);
     }
 
-    public static IResult BadRequest(ValidationError validationError)
+    public static IHttpResult BadRequest(ValidationError validationError)
     {
         Dictionary<string, IEnumerable<string>> errors = new();
         foreach (var error in validationError.ErrorInfos)

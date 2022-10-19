@@ -1,0 +1,37 @@
+@inject ProductsClient ProductsClient
+@using SalesManagementSystem.Contracts.Product;
+
+<MudDialog>
+    <DialogContent>
+        <MudNumericField 
+            Label="Stock Count" 
+            @bind-Value="_stockCount" 
+            Max="5000" 
+            Min="1"
+            Immediate="true" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Add</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    int _stockCount = 1;
+
+    [CascadingParameter] public MudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter] public ProductRes Product { get; set; } = null!;
+
+    async Task Submit() 
+    {
+        var result = await ProductsClient.IncrementStock(new(Product.Id, _stockCount));
+        if (result.IsFailure)
+        {
+            throw new Exception(result.Error.Message);
+        }
+        MudDialog.Close(DialogResult.Ok(result.Value));
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}

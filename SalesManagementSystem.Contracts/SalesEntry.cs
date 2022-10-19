@@ -1,7 +1,6 @@
-namespace SalesManagementSystem.Server.ApiContracts.SalesEntry;
+namespace SalesManagementSystem.Contracts.SalesEntry;
 
 using System.ComponentModel.DataAnnotations;
-using ProductContracts = SalesManagementSystem.Server.ApiContracts.Product.ProductRes;
 
 public sealed record CreateReq(
     [property: Required] Guid ProductId,

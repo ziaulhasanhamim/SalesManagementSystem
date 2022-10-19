@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalesManagementSystem.Blazo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalesManagementSystem.Server", "SalesManagementSystem.Server\SalesManagementSystem.Server.csproj", "{C11552DB-EC4E-4932-A3C7-AE0009D2E4D0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalesManagementSystem.Contracts", "SalesManagementSystem.Contracts\SalesManagementSystem.Contracts.csproj", "{FFDF5521-4FC4-4039-A0A6-9ACD2C482375}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{C11552DB-EC4E-4932-A3C7-AE0009D2E4D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C11552DB-EC4E-4932-A3C7-AE0009D2E4D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C11552DB-EC4E-4932-A3C7-AE0009D2E4D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFDF5521-4FC4-4039-A0A6-9ACD2C482375}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFDF5521-4FC4-4039-A0A6-9ACD2C482375}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFDF5521-4FC4-4039-A0A6-9ACD2C482375}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFDF5521-4FC4-4039-A0A6-9ACD2C482375}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

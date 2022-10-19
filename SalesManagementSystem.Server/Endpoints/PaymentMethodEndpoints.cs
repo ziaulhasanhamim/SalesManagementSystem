@@ -1,6 +1,6 @@
 namespace SalesManagementSystem.Server.Endpoints;
 
-using SalesManagementSystem.Server.ApiContracts.PaymentMethods;
+using SalesManagementSystem.Contracts.PaymentMethods;
 
 public static class PaymentMethodEndpoints
 {
@@ -11,12 +11,12 @@ public static class PaymentMethodEndpoints
         app.MapGet("/api/payment-methods/{id}", Get);
     }
 
-    public static async ValueTask<IResult> Create(
+    public static async ValueTask<IHttpResult> Create(
         CreateReq req, AppDbContext dbContext, CancellationToken ct)
     {
         if (!MiniValidator.TryValidate(req, out var vErrors))
         {
-            return ValidationErrorRes.BadRequest(vErrors);
+            return HttpHelpers.BadRequest(vErrors);
         }
         var paymentMethod = req.Adapt<PaymentMethod>();
         if (await paymentMethod.IsNameDuplicate(dbContext, ct))
@@ -25,24 +25,24 @@ public static class PaymentMethodEndpoints
             {
                 [nameof(CreateReq.Name)] = new[] { "A payment method with same name exists" }
             };
-            return ValidationErrorRes.BadRequest(errors);
+            return HttpHelpers.BadRequest(errors);
         }
         await dbContext.AddAsync(paymentMethod, ct);
         await dbContext.SaveChangesAsync(ct);
         var res = paymentMethod.Adapt<PaymentMethodRes>();
         var uri = $"/api/payment-methods/{paymentMethod.Id}";
-        return Results.Created(uri, res);
+        return HttpResults.Created(uri, res);
     }
 
-    public static async Task<IResult> GetAll(AppDbContext dbContext, CancellationToken ct)
+    public static async Task<IHttpResult> GetAll(AppDbContext dbContext, CancellationToken ct)
     {
         var paymentMethods = await dbContext.PaymentMethods
             .ProjectToType<PaymentMethodRes>()
             .ToListAsync(ct);
-        return Results.Ok(paymentMethods);
+        return HttpResults.Ok(paymentMethods);
     }
 
-    public static async Task<IResult> Get(Guid id, AppDbContext dbContext, CancellationToken ct)
+    public static async Task<IHttpResult> Get(Guid id, AppDbContext dbContext, CancellationToken ct)
     {
         var paymentMethod = await dbContext.PaymentMethods
             .Where(p => p.Id == id)
@@ -50,8 +50,8 @@ public static class PaymentMethodEndpoints
             .FirstOrDefaultAsync(ct);
         return paymentMethod switch
         {
-            not null => Results.Ok(paymentMethod),
-            null => Results.NotFound()
+            not null => HttpResults.Ok(paymentMethod),
+            null => HttpResults.NotFound()
         };
     }
 }

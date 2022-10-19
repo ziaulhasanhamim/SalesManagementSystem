@@ -1,4 +1,4 @@
-namespace SalesManagementSystem.Server.ApiContracts.Product;
+namespace SalesManagementSystem.Contracts.Product;
 
 using System.ComponentModel.DataAnnotations;
 
