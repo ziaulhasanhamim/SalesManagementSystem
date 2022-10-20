@@ -1,12 +1,13 @@
-namespace SalesManagementSystem.Blazor.Pages.Products;
+namespace SalesManagementSystem.Blazor.Pages.Customers;
 
-using SalesManagementSystem.Contracts.Product;
+using SalesManagementSystem.Contracts.Customer;
 
 public sealed partial class ManagePage
 {
-    IReadOnlyList<ProductRes> _products = Array.Empty<ProductRes>();
+    IReadOnlyList<CustomerRes> _customers = Array.Empty<CustomerRes>();
     bool _loading = true;
     bool _shouldReload = true;
+    bool _searchByNumber;
     string _searchText = "";
 
     private string SearchText
@@ -20,10 +21,7 @@ public sealed partial class ManagePage
     }
 
     [Inject]
-    public ProductsClient ProductsClient { get; set; } = null!;
-
-    [Inject]
-    public IDialogService DialogService { get; set; } = null!;
+    public CustomersClient CustomersClient { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -35,16 +33,17 @@ public sealed partial class ManagePage
     {
         _loading = true;
         StateHasChanged();
-        var apiResult = SearchText switch
+        var apiResult = (_searchText, _searchByNumber) switch
         {
-            "" or null => await ProductsClient.GetAll(),
-            _ => await ProductsClient.Search(SearchText)
+            ("", _) or (null, _) => await CustomersClient.GetAll(),
+            (_, false) => await CustomersClient.SearchByName(SearchText),
+            (_, true) => await CustomersClient.SearchByPhoneNumber(SearchText),
         };
         if (apiResult.IsFailure)
         {
             throw new Exception(apiResult.Error.Message);
         }
-        _products = apiResult.Value;
+        _customers = apiResult.Value;
         _loading = false;
     }
 
@@ -58,18 +57,5 @@ public sealed partial class ManagePage
         await Task.Delay(500);
         await LoadData();
         StateHasChanged();
-    }
-
-    async Task ShowStockIncementDialog(ProductRes product)
-    {
-        DialogParameters parameters = new();
-        parameters.Add("Product", product);
-        var dialogRef = DialogService.Show<AddStockDialog>($"Add Stock to {product.Name}", parameters);
-        var result = await dialogRef.Result;
-        if (result.Cancelled)
-        {
-            return;
-        }
-        await LoadData();
     }
 }

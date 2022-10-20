@@ -1,0 +1,43 @@
+@page "/customers/"
+
+<PageTitle>Manage Customers</PageTitle>
+
+<MudText Typo="Typo.h4">Manage your Customers</MudText>
+<MudSpacer />
+
+<MudTable Items="_customers" Loading="_loading">
+    <ToolBarContent>
+        <MudIconButton Class="me-1" Link="/customers/add?returnUrl=/customers/" Icon="@Icons.Filled.Add" Variant="Variant.Filled" Color="Color.Primary"></MudIconButton>
+        <MudIconButton OnClick="LoadData" Icon="@Icons.Filled.Refresh" Variant="Variant.Filled" Color="Color.Primary"></MudIconButton>
+        <MudSpacer />
+        <MudTextField @bind-Value="SearchText" Immediate="true" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+        <MudSwitch @bind-Checked="_searchByNumber" Color="Color.Secondary">
+            @if (_searchByNumber)
+            {
+                <span>Search Numbers</span>
+            }
+            else
+            {
+                <span>Search Names</span>
+            }
+        </MudSwitch>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Id</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Phone Number</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Id">@context.Id</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Phone Number">@context.PhoneNumber</MudTd>
+    </RowTemplate>
+    
+    <LoadingContent>
+        <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true"/>
+    </LoadingContent>
+
+    <NoRecordsContent>
+        <MudText Typo="Typo.h6">No Customer to show</MudText>
+    </NoRecordsContent>
+</MudTable>

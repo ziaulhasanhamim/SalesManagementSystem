@@ -47,8 +47,10 @@ public sealed class ProductsClient
         int? count = null,
         CancellationToken ct = default)
     {
-        var response = await _httpClient.GetAsync(
-            $"/api/products/search/{text}?count={count}", ct);
+        var uri = count is int val
+            ? $"/api/products/search/{text}?count={val}"
+            : $"/api/products/search/{text}";
+        var response = await _httpClient.GetAsync(uri, ct);
         if (response.IsSuccessStatusCode)
         {
             var products = await response.Content.ReadFromJsonAsync<IReadOnlyList<ProductRes>>(cancellationToken: ct);

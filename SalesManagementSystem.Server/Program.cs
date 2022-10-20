@@ -22,7 +22,7 @@ builder.Services.AddMudServices();
 builder.Services.AddHttpClient("SalesManagementServerClient", (sp, client) =>
 {
     var configs = sp.GetRequiredService<IConfiguration>();
-    var addr = configs["SalesManagementServerAddr"] 
+    var addr = configs["SalesManagementServerAddr"]
         ?? throw new ArgumentNullException("SalesManagementServerAddr", "Set 'SalesManagementServerAddr' in appsettings or env");
     client.BaseAddress = new Uri(addr);
 })
@@ -41,6 +41,9 @@ builder.Services.AddHttpClient("SalesManagementServerClient", (sp, client) =>
 
 builder.Services.AddScoped(
     sp => new ProductsClient(GetSalesManagementClient(sp)));
+
+builder.Services.AddScoped(
+    sp => new CustomersClient(GetSalesManagementClient(sp)));
 
 MapsterConfigurer.Configure();
 
@@ -69,5 +72,6 @@ app.MapFallbackToPage("/_Host");
 
 app.Run();
 
-HttpClient GetSalesManagementClient(IServiceProvider sp) =>
-    sp.GetRequiredService<IHttpClientFactory>().CreateClient("SalesManagementServerClient");
+static HttpClient GetSalesManagementClient(IServiceProvider sp) =>
+    sp.GetRequiredService<IHttpClientFactory>()
+        .CreateClient("SalesManagementServerClient");

@@ -8,7 +8,7 @@
 
 <MudTable Items="_products" Loading="_loading">
     <ToolBarContent>
-        <MudIconButton Class="me-1" Link="/products/add" Icon="@Icons.Filled.Add" Variant="Variant.Filled" Color="Color.Primary"></MudIconButton>
+        <MudIconButton Class="me-1" Link="/products/add?returnUrl=/products/" Icon="@Icons.Filled.Add" Variant="Variant.Filled" Color="Color.Primary"></MudIconButton>
         <MudIconButton OnClick="LoadData" Icon="@Icons.Filled.Refresh" Variant="Variant.Filled" Color="Color.Primary"></MudIconButton>
         <MudSpacer />
         <MudTextField @bind-Value="SearchText" Immediate="true" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />

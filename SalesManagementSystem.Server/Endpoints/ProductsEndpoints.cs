@@ -1,5 +1,6 @@
 namespace SalesManagementSystem.Server.Endpoints;
 
+using Microsoft.AspNetCore.Mvc;
 using SalesManagementSystem.Contracts.Product;
 
 public static class ProductEndpoints
@@ -69,17 +70,11 @@ public static class ProductEndpoints
         string text,
         AppDbContext dbContext,
         CancellationToken ct,
-        int? count = null)
+        int? count)
     {
-        Range range = count switch
-        {
-            null => ..,
-            > 0 and int val => ..val,
-            _ => ..100
-        };
         var products = await dbContext.Products
             .Where(p => EF.Functions.ILike(p.Name, $"%{text}%"))
-            .Take(range)
+            .TakeIfNotNull(count < 1 ? 20 : count)
             .ProjectToType<ProductRes>()
             .ToListAsync(ct);
         return HttpResults.Ok(products);

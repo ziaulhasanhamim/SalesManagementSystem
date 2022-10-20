@@ -1,7 +1,7 @@
 namespace SalesManagementSystem.Contracts.Clients;
 
 using System.Net;
-using SalesManagementSystem.Contracts.Customers;
+using SalesManagementSystem.Contracts.Customer;
 
 public sealed class CustomersClient
 {
@@ -44,11 +44,13 @@ public sealed class CustomersClient
 
     public async Task<Result<IReadOnlyList<CustomerRes>>> SearchByName(
         string name,
-        int count = 5,
+        int? count = null,
         CancellationToken ct = default)
     {
-        var response = await _httpClient.GetAsync(
-            $"/api/products/search-name/{name}?count={count}", ct);
+        var uri = count is int val
+            ? $"/api/customers/search-name/{name}?count={val}"
+            : $"/api/customers/search-name/{name}";
+        var response = await _httpClient.GetAsync(uri, ct);
         if (response.IsSuccessStatusCode)
         {
             var customers = await response.Content
@@ -61,11 +63,13 @@ public sealed class CustomersClient
 
     public async Task<Result<IReadOnlyList<CustomerRes>>> SearchByPhoneNumber(
         string number,
-        int count = 5,
+        int? count = null,
         CancellationToken ct = default)
     {
-        var response = await _httpClient.GetAsync(
-            $"/api/products/search-number/{number}?count={count}", ct);
+        var uri = count is int val
+            ? $"/api/customers/search-number/{number}?count={val}"
+            : $"/api/customers/search-number/{number}";
+        var response = await _httpClient.GetAsync(uri, ct);
         if (response.IsSuccessStatusCode)
         {
             var customers = await response.Content

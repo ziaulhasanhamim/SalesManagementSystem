@@ -1,0 +1,48 @@
+@page "/customers/add"
+
+<PageTitle>Add new Customer</PageTitle>
+
+<MudText Typo="Typo.h4" Class="mt-2 mb-3" >Add new Customer</MudText>
+
+<EditForm EditContext="_formCtx" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <MudGrid>
+        @if (_loading)
+        {
+            <MudProgressLinear Color="Color.Secondary" Indeterminate="true" />
+        }
+        <MudItem xs="12" sm="12">
+            <MudCard>
+                <MudCardContent>
+                    <MudTextField 
+                        Label="Name" 
+                        HelperText="min. 3 characters" 
+                        @bind-Value="_input.Name" 
+                        For="() => _input.Name" />
+
+                    <MudTextField
+                        Label="Phone Number"
+                        HelperText="Phone Number of Bangladesh"
+                        Class="mt-3" 
+                        @bind-Value="_input.PhoneNumber" 
+                        For="() => _input.PhoneNumber" />
+
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton 
+                        ButtonType="ButtonType.Submit" 
+                        Variant="Variant.Filled" 
+                        Color="Color.Primary"
+                        Class="ml-auto">
+                        Add
+                    </MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+        <MudItem xs="12">
+            <MudText Typo="Typo.body2" Align="Align.Center">
+                Fill out the form correctly to add a Customer
+            </MudText>
+        </MudItem>
+    </MudGrid>
+</EditForm>

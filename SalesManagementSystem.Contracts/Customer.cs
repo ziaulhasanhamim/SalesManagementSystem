@@ -1,4 +1,4 @@
-namespace SalesManagementSystem.Contracts.Customers;
+namespace SalesManagementSystem.Contracts.Customer;
 
 using System.ComponentModel.DataAnnotations;
 

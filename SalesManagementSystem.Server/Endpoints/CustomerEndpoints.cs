@@ -2,7 +2,7 @@ namespace SalesManagementSystem.Server.Endpoints;
 
 using System.Diagnostics.CodeAnalysis;
 using PhoneNumbers;
-using SalesManagementSystem.Contracts.Customers;
+using SalesManagementSystem.Contracts.Customer;
 
 public static class CustomerEndpoints
 {
@@ -73,17 +73,11 @@ public static class CustomerEndpoints
         string number,
         AppDbContext dbContext,
         CancellationToken ct,
-        int? count = null)
+        int? count)
     {
-        Range range = count switch
-        {
-            null => ..,
-            > 0 and int val => ..val,
-            _ => ..100
-        };
         var customers = await dbContext.Customers
             .Where(c => EF.Functions.Like(c.PhoneNumber, $"%{number}%"))
-            .Take(range)
+            .TakeIfNotNull(count < 1 ? 20 : count)
             .ProjectToType<CustomerRes>()
             .ToListAsync(ct);
         return HttpResults.Ok(customers);
@@ -93,19 +87,13 @@ public static class CustomerEndpoints
         string name,
         AppDbContext dbContext,
         CancellationToken ct,
-        int? count = null)
+        int? count)
     {
-        Range range = count switch
-        {
-            null => ..,
-            > 0 and int val => ..val,
-            _ => ..100
-        };
-        var customers = await dbContext.Customers
+        var takenCustomers = await dbContext.Customers
             .Where(c => EF.Functions.ILike(c.Name, $"%{name}%"))
-            .Take(range)
+            .TakeIfNotNull(count < 1 ? 20 : count)
             .ProjectToType<CustomerRes>()
             .ToListAsync(ct);
-        return HttpResults.Ok(customers);
+        return HttpResults.Ok(takenCustomers);
     }
 }

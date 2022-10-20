@@ -1,6 +1,6 @@
-namespace SalesManagementSystem.Blazor.Pages.Products;
+namespace SalesManagementSystem.Blazor.Pages.Customers;
 
-using SalesManagementSystem.Contracts.Product;
+using SalesManagementSystem.Contracts.Customer;
 
 public sealed partial class AddPage
 {
@@ -13,7 +13,7 @@ public sealed partial class AddPage
     public string? ReturnUrl { get; set; }
 
     [Inject]
-    public ProductsClient ProductsClient { get; init; } = null!;
+    public CustomersClient CustomersClient { get; init; } = null!;
 
     [Inject]
     public NavigationManager NavigationManager { get; init; } = null!;
@@ -33,15 +33,14 @@ public sealed partial class AddPage
     async Task OnValidSubmit()
     {
         _loading = true;
-        var result = await ProductsClient.Create(new CreateReq(
+        var result = await CustomersClient.Create(new CreateReq(
             _input.Name,
-            _input.BuyingPrice,
-            _input.SellingPrice,
-            _input.StockCount
-        ), default);
+            _input.PhoneNumber,
+            null
+        ));
 
         result.Switch(
-            _ => NavigationManager.NavigateTo(ReturnUrl ?? "/products/"),
+            _ => NavigationManager.NavigateTo(ReturnUrl ?? "/customers/"),
             err =>
             {
                 if (err is ValidationErrorRes { Errors: var errsDict })
@@ -71,13 +70,7 @@ public sealed partial class AddPage
         [Required, MinLength(3)]
         public string Name { get; set; } = "";
 
-        [Required, Range(1, int.MaxValue)]
-        public int BuyingPrice { get; set; } = 1;
-
-        [Required, Range(2, int.MaxValue)]
-        public int SellingPrice { get; set; } = 2;
-
-        [Required, Range(0, int.MaxValue)]
-        public int StockCount { get; set; }
+        [Required, Phone]
+        public string PhoneNumber { get; set; } = "";
     }
 }
