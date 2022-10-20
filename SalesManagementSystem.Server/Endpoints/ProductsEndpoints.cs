@@ -69,11 +69,17 @@ public static class ProductEndpoints
         string text,
         AppDbContext dbContext,
         CancellationToken ct,
-        int count = 5)
+        int? count = null)
     {
+        Range range = count switch
+        {
+            null => ..,
+            > 0 and int val => ..val,
+            _ => ..100
+        };
         var products = await dbContext.Products
             .Where(p => EF.Functions.ILike(p.Name, $"%{text}%"))
-            .Take(count)
+            .Take(range)
             .ProjectToType<ProductRes>()
             .ToListAsync(ct);
         return HttpResults.Ok(products);

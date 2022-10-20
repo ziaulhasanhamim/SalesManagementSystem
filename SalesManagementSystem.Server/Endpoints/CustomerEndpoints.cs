@@ -11,7 +11,7 @@ public static class CustomerEndpoints
         app.MapPost("/api/customers", Create);
         app.MapGet("/api/customers", GetAll);
         app.MapGet("/api/customers/{id}", Get);
-        app.MapGet("/api/customers/search-name/{nameText}", SearchByName);
+        app.MapGet("/api/customers/search-name/{name}", SearchByName);
         app.MapGet("/api/customers/search-number/{number}", SearchByPhoneNumber);
     }
 
@@ -73,25 +73,37 @@ public static class CustomerEndpoints
         string number,
         AppDbContext dbContext,
         CancellationToken ct,
-        int count = 5)
+        int? count = null)
     {
+        Range range = count switch
+        {
+            null => ..,
+            > 0 and int val => ..val,
+            _ => ..100
+        };
         var customers = await dbContext.Customers
             .Where(c => EF.Functions.Like(c.PhoneNumber, $"%{number}%"))
-            .Take(count)
+            .Take(range)
             .ProjectToType<CustomerRes>()
             .ToListAsync(ct);
         return HttpResults.Ok(customers);
     }
 
     public static async Task<IHttpResult> SearchByName(
-        string nameText,
+        string name,
         AppDbContext dbContext,
         CancellationToken ct,
-        int count = 5)
+        int? count = null)
     {
+        Range range = count switch
+        {
+            null => ..,
+            > 0 and int val => ..val,
+            _ => ..100
+        };
         var customers = await dbContext.Customers
-            .Where(c => EF.Functions.ILike(c.Name, $"%{nameText}%"))
-            .Take(count)
+            .Where(c => EF.Functions.ILike(c.Name, $"%{name}%"))
+            .Take(range)
             .ProjectToType<CustomerRes>()
             .ToListAsync(ct);
         return HttpResults.Ok(customers);

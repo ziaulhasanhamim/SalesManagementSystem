@@ -44,7 +44,7 @@ public sealed class ProductsClient
 
     public async Task<Result<IReadOnlyList<ProductRes>>> Search(
         string text,
-        int count = 5,
+        int? count = null,
         CancellationToken ct = default)
     {
         var response = await _httpClient.GetAsync(
