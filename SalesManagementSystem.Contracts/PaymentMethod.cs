@@ -1,4 +1,4 @@
-namespace SalesManagementSystem.Contracts.PaymentMethods;
+namespace SalesManagementSystem.Contracts.PaymentMethod;
 
 using System.ComponentModel.DataAnnotations;
 

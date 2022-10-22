@@ -1,6 +1,6 @@
 namespace SalesManagementSystem.Server.Endpoints;
 
-using SalesManagementSystem.Contracts.PaymentMethods;
+using SalesManagementSystem.Contracts.PaymentMethod;
 
 public static class PaymentMethodEndpoints
 {

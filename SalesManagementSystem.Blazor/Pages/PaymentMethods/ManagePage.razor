@@ -1,0 +1,29 @@
+@page "/payment-methods/"
+
+<PageTitle>Manage Payment Methods</PageTitle>
+
+<MudText Typo="Typo.h4">Manage Payment Methods</MudText>
+<MudSpacer />
+
+<MudTable Items="_payments" Loading="_loading">
+    <ToolBarContent>
+        <MudIconButton Class="me-1" Link="/payment-methods/add?returnUrl=/payment-methods/" Icon="@Icons.Filled.Add" Variant="Variant.Filled" Color="Color.Primary"></MudIconButton>
+        <MudIconButton OnClick="LoadData" Icon="@Icons.Filled.Refresh" Variant="Variant.Filled" Color="Color.Primary"></MudIconButton>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Id</MudTh>
+        <MudTh>Name</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Id">@context.Id</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+    </RowTemplate>
+    
+    <LoadingContent>
+        <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true"/>
+    </LoadingContent>
+
+    <NoRecordsContent>
+        <MudText Typo="Typo.h6">No Payment method to show</MudText>
+    </NoRecordsContent>
+</MudTable>
