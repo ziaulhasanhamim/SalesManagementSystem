@@ -1,14 +1,14 @@
-namespace SalesManagementSystem.Blazor.Pages.PaymentMethods;
+namespace SalesManagementSystem.Blazor.Pages.SalesEntry;
 
-using SalesManagementSystem.Contracts.PaymentMethod;
+using SalesManagementSystem.Contracts.SalesEntry;
 
 public sealed partial class ManagePage
 {
-    IReadOnlyList<PaymentMethodRes> _payments = Array.Empty<PaymentMethodRes>();
+    IReadOnlyList<SalesEntryRes> _salesEntries = Array.Empty<SalesEntryRes>();
     bool _loading = true;
 
     [Inject]
-    public PaymentMethodsClient PaymentsClient { get; set; } = null!;
+    public SalesEntriesClient SalesEntriesClient { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -20,12 +20,12 @@ public sealed partial class ManagePage
     {
         _loading = true;
         StateHasChanged();
-        var apiResult = await PaymentsClient.GetAll();
+        var apiResult = await SalesEntriesClient.GetAll();
         if (apiResult.IsFailure)
         {
             throw new Exception(apiResult.Error.Message);
         }
-        _payments = apiResult.Value;
+        _salesEntries = apiResult.Value;
         _loading = false;
     }
 }

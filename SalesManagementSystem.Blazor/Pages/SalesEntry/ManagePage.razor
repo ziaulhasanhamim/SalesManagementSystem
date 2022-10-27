@@ -1,0 +1,43 @@
+@page "/sales/"
+
+<PageTitle>Manage Sales</PageTitle>
+
+<MudText Typo="Typo.h4">Manage Sales</MudText>
+<MudSpacer />
+
+<MudTable Items="_salesEntries" Loading="_loading">
+    <ToolBarContent>
+        <MudIconButton Class="me-1" Link="/sales/add?returnUrl=/sales/" Icon="@Icons.Filled.Add" Variant="Variant.Filled" Color="Color.Primary"></MudIconButton>
+        <MudIconButton OnClick="LoadData" Icon="@Icons.Filled.Refresh" Variant="Variant.Filled" Color="Color.Primary"></MudIconButton>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Id</MudTh>
+        <MudTh>Product</MudTh>
+        <MudTh>Quantity</MudTh>
+        <MudTh>Sold Price</MudTh>
+        <MudTh>Buying Price</MudTh>
+        <MudTh>Profit</MudTh>
+        <MudTh>Payment Method</MudTh>
+        <MudTh>Customer Name</MudTh>
+        <MudTh>Customer Number</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Id">@context.Id</MudTd>
+        <MudTd DataLabel="Name">@context.ProductName</MudTd>
+        <MudTd DataLabel="Name">@context.Quantity</MudTd>
+        <MudTd DataLabel="Name">@context.SoldPrice</MudTd>
+        <MudTd DataLabel="Name">@context.BuyingPrice</MudTd>
+        <MudTd DataLabel="Name">@context.Profit</MudTd>
+        <MudTd DataLabel="Name">@context.PaymentMethod</MudTd>
+        <MudTd DataLabel="Name">@context.CustomerName</MudTd>
+        <MudTd DataLabel="Name">@context.CustomerPhoneNumber</MudTd>
+    </RowTemplate>
+    
+    <LoadingContent>
+        <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true"/>
+    </LoadingContent>
+
+    <NoRecordsContent>
+        <MudText Typo="Typo.h6">No Sales to show</MudText>
+    </NoRecordsContent>
+</MudTable>

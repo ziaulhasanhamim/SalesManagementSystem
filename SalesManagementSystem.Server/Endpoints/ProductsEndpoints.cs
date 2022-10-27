@@ -10,7 +10,7 @@ public static class ProductEndpoints
         app.MapPost("/api/products", Create);
         app.MapGet("/api/products", GetAll);
         app.MapGet("/api/products/{id}", Get);
-        app.MapGet("/api/products/search/{text}", Search);
+        app.MapGet("/api/products/search/{text?}", Search);
         app.MapPost("/api/products/incement-stock", IncrementStock);
     }
 
@@ -67,13 +67,15 @@ public static class ProductEndpoints
     }
 
     public static async Task<IHttpResult> Search(
-        string text,
+        string? text,
         AppDbContext dbContext,
         CancellationToken ct,
         int? count)
     {
         var products = await dbContext.Products
-            .Where(p => EF.Functions.ILike(p.Name, $"%{text}%"))
+            .WhereIfTrue(
+                !string.IsNullOrEmpty(text),
+                p => EF.Functions.ILike(p.Name, $"%{text}%"))
             .TakeIfNotNull(count < 1 ? 20 : count)
             .ProjectToType<ProductRes>()
             .ToListAsync(ct);

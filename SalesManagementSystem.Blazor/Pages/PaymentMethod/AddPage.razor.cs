@@ -1,4 +1,4 @@
-namespace SalesManagementSystem.Blazor.Pages.PaymentMethods;
+namespace SalesManagementSystem.Blazor.Pages.PaymentMethod;
 
 using SalesManagementSystem.Contracts.PaymentMethod;
 

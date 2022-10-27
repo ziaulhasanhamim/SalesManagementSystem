@@ -11,8 +11,8 @@ public static class CustomerEndpoints
         app.MapPost("/api/customers", Create);
         app.MapGet("/api/customers", GetAll);
         app.MapGet("/api/customers/{id}", Get);
-        app.MapGet("/api/customers/search-name/{name}", SearchByName);
-        app.MapGet("/api/customers/search-number/{number}", SearchByPhoneNumber);
+        app.MapGet("/api/customers/search-name/{name?}", SearchByName);
+        app.MapGet("/api/customers/search-number/{number?}", SearchByPhoneNumber);
     }
 
     public static async ValueTask<IHttpResult> Create(
@@ -70,13 +70,13 @@ public static class CustomerEndpoints
     }
 
     public static async Task<IHttpResult> SearchByPhoneNumber(
-        string number,
+        string? number,
         AppDbContext dbContext,
         CancellationToken ct,
         int? count)
     {
         var customers = await dbContext.Customers
-            .Where(c => EF.Functions.Like(c.PhoneNumber, $"%{number}%"))
+            .WhereIfTrue(!string.IsNullOrEmpty(number), c => EF.Functions.Like(c.PhoneNumber, $"%{number}%"))
             .TakeIfNotNull(count < 1 ? 20 : count)
             .ProjectToType<CustomerRes>()
             .ToListAsync(ct);
@@ -84,13 +84,13 @@ public static class CustomerEndpoints
     }
 
     public static async Task<IHttpResult> SearchByName(
-        string name,
+        string? name,
         AppDbContext dbContext,
         CancellationToken ct,
         int? count)
     {
         var takenCustomers = await dbContext.Customers
-            .Where(c => EF.Functions.ILike(c.Name, $"%{name}%"))
+            .WhereIfTrue(!string.IsNullOrEmpty(name), c => EF.Functions.ILike(c.Name, $"%{name}%"))
             .TakeIfNotNull(count < 1 ? 20 : count)
             .ProjectToType<CustomerRes>()
             .ToListAsync(ct);

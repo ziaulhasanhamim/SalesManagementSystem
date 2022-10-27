@@ -1,0 +1,76 @@
+@page "/sales/add"
+
+<PageTitle>Add Sales</PageTitle>
+
+<MudText Typo="Typo.h4" Class="mt-2 mb-3" >Add Sales</MudText>
+
+<EditForm EditContext="_formCtx" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <MudGrid>
+        @if (_loading)
+        {
+            <MudProgressLinear Color="Color.Secondary" Indeterminate="true" />
+        }
+        <MudItem xs="12" sm="12">
+            <MudCard>
+                <MudCardContent>
+                    <MudAutocomplete 
+                        Label="Product" 
+                        @bind-Value="_input.Product" 
+                        SearchFuncWithCancel="SearchProducts!"
+                        ToStringFunc="p => p!.Name"
+                        ShowProgressIndicator="true"
+                        For="() => _input.Product" />
+
+                    <MudNumericField
+                        Label="Quantity"
+                        HelperText="Sold Quantity"
+                        Class="mt-3" 
+                        @bind-Value="_input.Quantity" 
+                        For="() => _input.Quantity" />
+
+                    <MudNumericField
+                        Label="Sold Price"
+                        HelperText="Price that the product was sold"
+                        Class="mt-3" 
+                        @bind-Value="_input.SoldPrice" 
+                        For="() => _input.SoldPrice" />
+
+                    <MudSelect 
+                        Label="Payment Method" 
+                        @bind-Value="_input.PaymentMethod" 
+                        AnchorOrigin="Origin.BottomCenter"
+                        ToStringFunc="p => p!.Name">
+                        @foreach (var paymentMethod in _paymentMethods)
+                        {
+                            <MudSelectItem Value="paymentMethod" />
+                        }
+                    </MudSelect>
+
+                    <MudAutocomplete 
+                        Label="Customer" 
+                        @bind-Value="_input.Customer" 
+                        SearchFuncWithCancel="SearchCustomers!"
+                        ToStringFunc=@(c => $"{c!.Name}({c!.PhoneNumber})")
+                        ShowProgressIndicator="true"
+                        For="() => _input.Customer" />
+
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton 
+                        ButtonType="ButtonType.Submit" 
+                        Variant="Variant.Filled" 
+                        Color="Color.Primary"
+                        Class="ml-auto">
+                        Add
+                    </MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+        <MudItem xs="12">
+            <MudText Typo="Typo.body2" Align="Align.Center">
+                Fill out the form correctly to add sales
+            </MudText>
+        </MudItem>
+    </MudGrid>
+</EditForm>

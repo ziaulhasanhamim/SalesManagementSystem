@@ -48,6 +48,9 @@ builder.Services.AddScoped(
 builder.Services.AddScoped(
     sp => new PaymentMethodsClient(GetSalesManagementClient(sp)));
 
+builder.Services.AddScoped(
+    sp => new SalesEntriesClient(GetSalesManagementClient(sp)));
+
 MapsterConfigurer.Configure();
 
 var app = builder.Build();

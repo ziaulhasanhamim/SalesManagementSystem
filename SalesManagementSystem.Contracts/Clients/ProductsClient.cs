@@ -43,7 +43,7 @@ public sealed class ProductsClient
     }
 
     public async Task<Result<IReadOnlyList<ProductRes>>> Search(
-        string text,
+        string? text,
         int? count = null,
         CancellationToken ct = default)
     {

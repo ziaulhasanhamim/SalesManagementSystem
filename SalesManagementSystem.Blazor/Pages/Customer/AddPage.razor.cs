@@ -1,4 +1,4 @@
-namespace SalesManagementSystem.Blazor.Pages.Customers;
+namespace SalesManagementSystem.Blazor.Pages.Customer;
 
 using SalesManagementSystem.Contracts.Customer;
 

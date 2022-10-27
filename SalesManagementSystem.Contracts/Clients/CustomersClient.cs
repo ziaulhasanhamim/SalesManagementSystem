@@ -43,14 +43,16 @@ public sealed class CustomersClient
     }
 
     public async Task<Result<IReadOnlyList<CustomerRes>>> SearchByName(
-        string name,
+        string? name,
         int? count = null,
         CancellationToken ct = default)
     {
         var uri = count is int val
             ? $"/api/customers/search-name/{name}?count={val}"
             : $"/api/customers/search-name/{name}";
+
         var response = await _httpClient.GetAsync(uri, ct);
+        Console.WriteLine($"\n\n\n\nc{await response.Content.ReadAsStringAsync()}\n\n\n\n");
         if (response.IsSuccessStatusCode)
         {
             var customers = await response.Content
@@ -62,7 +64,7 @@ public sealed class CustomersClient
     }
 
     public async Task<Result<IReadOnlyList<CustomerRes>>> SearchByPhoneNumber(
-        string number,
+        string? number,
         int? count = null,
         CancellationToken ct = default)
     {

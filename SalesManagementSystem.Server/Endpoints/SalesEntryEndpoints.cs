@@ -24,7 +24,7 @@ public static class SalesEntryEndpoints
         {
             return HttpResults.BadRequest((ValidationErrorRes)validationResult.Error);
         }
-        var (product, _, paymentMethod) = validationResult.Value;
+        var (product, customer, paymentMethod) = validationResult.Value;
         if (!product.TryRemoveStock(req.Quantity))
         {
             Dictionary<string, IEnumerable<string>> errors = new()
@@ -39,12 +39,14 @@ public static class SalesEntryEndpoints
         await dbContext.SaveChangesAsync(ct);
         SalesEntryRes res = new(
             salesEntry.Id,
-            salesEntry.ProductId,
+            product.Name,
             salesEntry.Quantity,
             salesEntry.SoldPrice,
+            product.BuyingPrice,
             paymentMethod.Name,
             salesEntry.TransactionTime,
-            salesEntry.CustomerId
+            customer?.PhoneNumber,
+            customer?.Name
         );
         var uri = $"/api/sales-entry/{res.Id}";
         return HttpResults.Created(uri, res);
@@ -53,7 +55,18 @@ public static class SalesEntryEndpoints
     public static async Task<IHttpResult> GetAll(AppDbContext dbContext, CancellationToken ct)
     {
         var salesEntries = await dbContext.SalesEntries
-            .ProjectToType<SalesEntryRes>()
+            .OrderByDescending(s => s.TransactionTime)
+            .Select(s => new SalesEntryRes(
+                s.Id,
+                s.Product!.Name,
+                s.Quantity,
+                s.SoldPrice,
+                s.Product.BuyingPrice,
+                s.PaymentMethod!.Name,
+                s.TransactionTime,
+                s.Customer!.PhoneNumber,
+                s.Customer!.Name
+            ))
             .ToListAsync(ct);
         return HttpResults.Ok(salesEntries);
     }
@@ -62,7 +75,17 @@ public static class SalesEntryEndpoints
     {
         var saleEntry = await dbContext.SalesEntries
             .Where(p => p.Id == id)
-            .ProjectToType<SalesEntryRes>()
+            .Select(s => new SalesEntryRes(
+                s.Id,
+                s.Product!.Name,
+                s.Quantity,
+                s.SoldPrice,
+                s.Product.BuyingPrice,
+                s.PaymentMethod!.Name,
+                s.TransactionTime,
+                s.Customer!.PhoneNumber,
+                s.Customer!.Name
+            ))
             .FirstOrDefaultAsync(ct);
         return saleEntry switch
         {
@@ -76,7 +99,18 @@ public static class SalesEntryEndpoints
         var dtUtc = dateTime.ToUniversalTime();
         var salesEntries = await dbContext.SalesEntries
             .Where(p => p.TransactionTime >= dtUtc)
-            .ProjectToType<SalesEntryRes>()
+            .OrderByDescending(s => s.TransactionTime)
+            .Select(s => new SalesEntryRes(
+                s.Id,
+                s.Product!.Name,
+                s.Quantity,
+                s.SoldPrice,
+                s.Product.BuyingPrice,
+                s.PaymentMethod!.Name,
+                s.TransactionTime,
+                s.Customer!.PhoneNumber,
+                s.Customer!.Name
+            ))
             .ToListAsync(ct);
         return HttpResults.Ok(salesEntries);
     }
@@ -96,7 +130,7 @@ public static class SalesEntryEndpoints
         }
         var customer = req.CustomerId switch
         {
-            { } customerId => await dbContext.Customers
+            Guid customerId => await dbContext.Customers
                 .FirstOrDefaultAsync(c => c.Id == customerId, ct),
             _ => null
         };

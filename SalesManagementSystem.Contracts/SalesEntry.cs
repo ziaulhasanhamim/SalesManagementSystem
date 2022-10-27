@@ -1,6 +1,7 @@
 namespace SalesManagementSystem.Contracts.SalesEntry;
 
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 public sealed record CreateReq(
     [property: Required] Guid ProductId,
@@ -12,10 +13,15 @@ public sealed record CreateReq(
 
 public sealed record SalesEntryRes(
     Guid Id,
-    Guid ProductId,
+    string ProductName,
     int Quantity,
     int SoldPrice,
+    int BuyingPrice,
     string PaymentMethod,
     DateTime TransactionTime,
-    Guid? CustomerId
-);
+    string? CustomerPhoneNumber,
+    string? CustomerName)
+{
+    [JsonIgnore]
+    public int Profit => SoldPrice - BuyingPrice;
+}

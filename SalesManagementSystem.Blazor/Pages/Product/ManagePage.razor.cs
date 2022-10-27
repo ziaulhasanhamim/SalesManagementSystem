@@ -1,4 +1,4 @@
-namespace SalesManagementSystem.Blazor.Pages.Products;
+namespace SalesManagementSystem.Blazor.Pages.Product;
 
 using SalesManagementSystem.Contracts.Product;
 
