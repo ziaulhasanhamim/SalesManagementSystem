@@ -5,10 +5,18 @@
 <MudText Typo="Typo.h4">Manage Sales</MudText>
 <MudSpacer />
 
-<MudTable Items="_salesEntries" Loading="_loading">
+<MudTable Items="_salesEntries" Loading="_loading" CustomFooter="true" Striped="true" Bordered="true">
     <ToolBarContent>
         <MudIconButton Class="me-1" Link="/sales/add?returnUrl=/sales/" Icon="@Icons.Filled.Add" Variant="Variant.Filled" Color="Color.Primary"></MudIconButton>
         <MudIconButton OnClick="LoadData" Icon="@Icons.Filled.Refresh" Variant="Variant.Filled" Color="Color.Primary"></MudIconButton>
+        <MudSpacer />
+        <MudSelect @bind-Value="SalesOf" Class="mt-0">
+            <MudSelectItem Value="SalesOfType.Today">Today's Sales</MudSelectItem>
+            <MudSelectItem Value="SalesOfType.ThisWeek">This week's sales</MudSelectItem>
+            <MudSelectItem Value="SalesOfType.ThisMonth">This month's sales</MudSelectItem>
+            <MudSelectItem Value="SalesOfType.ThisYear">This year's sales</MudSelectItem>
+            <MudSelectItem Value="SalesOfType.All">All sales</MudSelectItem>
+        </MudSelect>
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Id</MudTh>
@@ -20,18 +28,34 @@
         <MudTh>Payment Method</MudTh>
         <MudTh>Customer Name</MudTh>
         <MudTh>Customer Number</MudTh>
+        <MudTh>Transaction Time</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Id">@context.Id</MudTd>
+        <MudTd DataLabel="Id" style="overflow: hidden;">@context.Id</MudTd>
         <MudTd DataLabel="Name">@context.ProductName</MudTd>
-        <MudTd DataLabel="Name">@context.Quantity</MudTd>
-        <MudTd DataLabel="Name">@context.SoldPrice</MudTd>
-        <MudTd DataLabel="Name">@context.BuyingPrice</MudTd>
-        <MudTd DataLabel="Name">@context.Profit</MudTd>
-        <MudTd DataLabel="Name">@context.PaymentMethod</MudTd>
-        <MudTd DataLabel="Name">@context.CustomerName</MudTd>
-        <MudTd DataLabel="Name">@context.CustomerPhoneNumber</MudTd>
+        <MudTd DataLabel="Quantity">@context.Quantity</MudTd>
+        <MudTd DataLabel="SoldPrice">@context.SoldPrice</MudTd>
+        <MudTd DataLabel="Buying Price">@context.BuyingPrice</MudTd>
+        <MudTd DataLabel="Profit">@context.Profit</MudTd>
+        <MudTd DataLabel="Payment Method">@context.PaymentMethod</MudTd>
+        <MudTd DataLabel="Customer Name">@context.CustomerName</MudTd>
+        <MudTd DataLabel="Customer Number">@context.CustomerPhoneNumber</MudTd>
+        <MudTd DataLabel="Transaction Time">@context.TransactionTime</MudTd>
     </RowTemplate>
+
+    <FooterContent>
+        <MudTFootRow>
+            <MudTd colspan="4">
+                <MudText Color="Color.Info" Typo="Typo.button">Net Sales = @_salesData?.NetSales</MudText>
+            </MudTd>
+            <MudTd colspan="4">
+                <MudText Color="Color.Error" Typo="Typo.button">Net Cost = @_salesData?.NetCost</MudText>
+            </MudTd>
+            <MudTd colspan="3">
+                <MudText Color="Color.Success" Typo="Typo.button">Net Profit = @_salesData?.NetProfit</MudText>
+            </MudTd>
+        </MudTFootRow>
+    </FooterContent>
     
     <LoadingContent>
         <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true"/>

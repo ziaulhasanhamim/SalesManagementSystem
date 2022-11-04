@@ -7,9 +7,9 @@ public static class SalesEntryEndpoints
     public static void Map(WebApplication app)
     {
         app.MapPost("/api/sales-entries", Create);
-        app.MapGet("/api/sales-entries", GetAll);
         app.MapGet("/api/sales-entries/{id}", Get);
-        app.MapGet("/api/sales-entries/after/{datetime}", AfterTime);
+        app.MapGet("/api/sales/{dt?}", GetAllSales);
+        app.MapGet("/api/sales-data/{dt?}", GetSalesData);
     }
 
     public static async ValueTask<IHttpResult> Create(
@@ -51,26 +51,6 @@ public static class SalesEntryEndpoints
         var uri = $"/api/sales-entry/{res.Id}";
         return HttpResults.Created(uri, res);
     }
-
-    public static async Task<IHttpResult> GetAll(AppDbContext dbContext, CancellationToken ct)
-    {
-        var salesEntries = await dbContext.SalesEntries
-            .OrderByDescending(s => s.TransactionTime)
-            .Select(s => new SalesEntryRes(
-                s.Id,
-                s.Product!.Name,
-                s.Quantity,
-                s.SoldPrice,
-                s.Product.BuyingPrice,
-                s.PaymentMethod!.Name,
-                s.TransactionTime,
-                s.Customer!.PhoneNumber,
-                s.Customer!.Name
-            ))
-            .ToListAsync(ct);
-        return HttpResults.Ok(salesEntries);
-    }
-
     public static async Task<IHttpResult> Get(Guid id, AppDbContext dbContext, CancellationToken ct)
     {
         var saleEntry = await dbContext.SalesEntries
@@ -94,11 +74,11 @@ public static class SalesEntryEndpoints
         };
     }
 
-    public static async Task<IHttpResult> AfterTime(DateTime dateTime, AppDbContext dbContext, CancellationToken ct)
+    public static async Task<IHttpResult> GetAllSales(DateTime? dt, AppDbContext dbContext, CancellationToken ct)
     {
-        var dtUtc = dateTime.ToUniversalTime();
+        var dtUtc = dt?.ToUniversalTime();
         var salesEntries = await dbContext.SalesEntries
-            .Where(p => p.TransactionTime >= dtUtc)
+            .WhereIf(dtUtc is not null, p => p.TransactionTime >= dtUtc)
             .OrderByDescending(s => s.TransactionTime)
             .Select(s => new SalesEntryRes(
                 s.Id,
@@ -113,6 +93,17 @@ public static class SalesEntryEndpoints
             ))
             .ToListAsync(ct);
         return HttpResults.Ok(salesEntries);
+    }
+
+    public static async Task<IHttpResult> GetSalesData(DateTime? dt, AppDbContext dbContext, CancellationToken ct)
+    {
+        var dtUtc = dt?.ToUniversalTime();
+        var query = dbContext.SalesEntries
+            .WhereIf(dtUtc is not null, p => p.TransactionTime >= dtUtc);
+        var netCost = await query.SumAsync(s => (long)s.Product!.BuyingPrice, cancellationToken: ct);
+        var netSales = await query.SumAsync(s => (long)s.SoldPrice, cancellationToken: ct);
+        var salesData = new SalesDataRes(netSales, netCost);
+        return HttpResults.Ok(salesData);
     }
 
     private static async Task<Result<(Product, Customer?, PaymentMethod)>> ValidateIds(

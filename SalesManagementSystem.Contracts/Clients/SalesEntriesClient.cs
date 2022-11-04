@@ -30,9 +30,13 @@ public sealed class SalesEntriesClient
         return new Error("Server didn't respond properly");
     }
 
-    public async Task<Result<IReadOnlyList<SalesEntryRes>>> GetAll(CancellationToken ct = default)
+    public async Task<Result<IReadOnlyList<SalesEntryRes>>> GetSales(
+        uint? days = null,
+        CancellationToken ct = default)
     {
-        var response = await _httpClient.GetAsync("/api/sales-entries", ct);
+        DateTime? dt = days is uint val ? DateTime.Now.Date.AddDays((val - 1) * -1) : null;
+        var dtUtc = dt?.ToUniversalTime();
+        var response = await _httpClient.GetAsync($"/api/sales/{dtUtc:s}", ct);
         if (response.IsSuccessStatusCode)
         {
             var salesEntries = await response.Content
@@ -43,19 +47,19 @@ public sealed class SalesEntriesClient
         return new Error("Server didn't respond properly");
     }
 
-    public async Task<Result<IReadOnlyList<SalesEntryRes>>> GetAllOfLastDays(
-        uint days,
+    public async Task<Result<SalesDataRes>> GetSalesData(
+        uint? days = null,
         CancellationToken ct = default)
     {
-        var dt = DateTime.Now.Date.AddDays((days - 1) * -1)
-            .ToUniversalTime();
-        var response = await _httpClient.GetAsync($"/api/sales-entries/after/{dt}", ct);
+        DateTime? dt = days is uint val ? DateTime.Now.Date.AddDays((val - 1) * -1) : null;
+        var dtUtc = dt?.ToUniversalTime();
+        var response = await _httpClient.GetAsync($"/api/sales-data/{dtUtc:s}", ct);
         if (response.IsSuccessStatusCode)
         {
-            var salesEntries = await response.Content
-                .ReadFromJsonAsync<IReadOnlyList<SalesEntryRes>>(cancellationToken: ct);
-            Guard.IsNotNull(salesEntries);
-            return Result.From(salesEntries);
+            var salesData = await response.Content
+                .ReadFromJsonAsync<SalesDataRes>(cancellationToken: ct);
+            Guard.IsNotNull(salesData);
+            return Result.From(salesData);
         }
         return new Error("Server didn't respond properly");
     }

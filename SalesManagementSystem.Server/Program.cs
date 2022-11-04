@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.HttpLogging;
 using MudBlazor.Services;
 using Polly;
 using Polly.Contrib.WaitAndRetry;
@@ -59,6 +60,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseHttpLogging();
 }
 
 app.UseHttpsRedirection();

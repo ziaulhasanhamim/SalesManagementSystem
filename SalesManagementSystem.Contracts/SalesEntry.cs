@@ -25,3 +25,11 @@ public sealed record SalesEntryRes(
     [JsonIgnore]
     public int Profit => SoldPrice - BuyingPrice;
 }
+
+public sealed record SalesDataRes(
+    long NetSales,
+    long NetCost)
+{
+    [JsonIgnore]
+    public long NetProfit => NetSales - NetCost;
+}

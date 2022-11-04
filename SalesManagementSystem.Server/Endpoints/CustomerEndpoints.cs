@@ -76,7 +76,7 @@ public static class CustomerEndpoints
         int? count)
     {
         var customers = await dbContext.Customers
-            .WhereIfTrue(!string.IsNullOrEmpty(number), c => EF.Functions.Like(c.PhoneNumber, $"%{number}%"))
+            .WhereIf(!string.IsNullOrEmpty(number), c => EF.Functions.Like(c.PhoneNumber, $"%{number}%"))
             .TakeIfNotNull(count < 1 ? 20 : count)
             .ProjectToType<CustomerRes>()
             .ToListAsync(ct);
@@ -90,7 +90,7 @@ public static class CustomerEndpoints
         int? count)
     {
         var takenCustomers = await dbContext.Customers
-            .WhereIfTrue(!string.IsNullOrEmpty(name), c => EF.Functions.ILike(c.Name, $"%{name}%"))
+            .WhereIf(!string.IsNullOrEmpty(name), c => EF.Functions.ILike(c.Name, $"%{name}%"))
             .TakeIfNotNull(count < 1 ? 20 : count)
             .ProjectToType<CustomerRes>()
             .ToListAsync(ct);

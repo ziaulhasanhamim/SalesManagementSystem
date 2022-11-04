@@ -15,7 +15,7 @@ public static class QueryableExtensions
         return queryable.Take(count.Value);
     }
 
-    public static IQueryable<T> WhereIfTrue<T>(
+    public static IQueryable<T> WhereIf<T>(
         this IQueryable<T> queryable,
         bool useWhere,
         Expression<Func<T, bool>> predicate

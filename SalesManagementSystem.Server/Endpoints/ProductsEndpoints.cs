@@ -73,7 +73,7 @@ public static class ProductEndpoints
         int? count)
     {
         var products = await dbContext.Products
-            .WhereIfTrue(
+            .WhereIf(
                 !string.IsNullOrEmpty(text),
                 p => EF.Functions.ILike(p.Name, $"%{text}%"))
             .TakeIfNotNull(count < 1 ? 20 : count)
