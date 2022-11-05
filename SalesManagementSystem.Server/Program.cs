@@ -1,6 +1,11 @@
+using System.Security.Claims;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.HttpLogging;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using MudBlazor.Services;
 using Polly;
 using Polly.Contrib.WaitAndRetry;
@@ -10,12 +15,62 @@ using SalesManagementSystem.Server.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddFastAuthWithEFCore<User, AppDbContext>(options =>
+{
+    options.GenerateClaims += (List<Claim> claims, User u) =>
+    {
+        claims.AddRange(
+            u.Roles?.Select(r => new Claim(ClaimTypes.Role, r))
+            ?? Array.Empty<Claim>());
+    };
+    options.DefaultTokenCreationOptions = new()
+    {
+        AccessTokenLifeSpan = TimeSpan.FromDays(30)
+    };
+    options.UseDefaultCredentials(builder.Configuration["SecretKey"]);
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(jwtOptions =>
+        {
+            jwtOptions.MapInboundClaims = false;
+            jwtOptions.TokenValidationParameters = new()
+            {
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidAlgorithms = new[] { SecurityAlgorithms.HmacSha256 },
+                ValidateIssuerSigningKey = true,
+                ValidateLifetime = true,
+                IssuerSigningKey = options.DefaultTokenCreationOptions.SigningCredentials!.Key
+            };
+        });
+});
+
 builder.Services.AddDbContext<AppDbContext>(
     options => options.UseNpgsql(builder.Configuration["DbConStr"] ?? throw new ArgumentException("Add 'DbConStr' in environment variable or user secrets")));
 
 builder.Services.AddRazorPages();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options => options.CustomSchemaIds(t => t.ToString()));
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("bearerAuth", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.Http,
+        Scheme = JwtBearerDefaults.AuthenticationScheme,
+        BearerFormat = "JWT",
+        Description = "JWT Authorization header using the Bearer scheme."
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "bearerAuth" }
+            },
+            Array.Empty<string>()
+        }
+    });
+    options.CustomSchemaIds(t => t.ToString());
+});
 
 builder.Services.AddServerSideBlazor();
 builder.Services.AddMudServices();
