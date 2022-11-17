@@ -27,7 +27,8 @@ builder.Services.AddFastAuthWithEFCore<User, AppDbContext>(options =>
     {
         AccessTokenLifeSpan = TimeSpan.FromDays(30)
     };
-    options.UseDefaultCredentials(builder.Configuration["SecretKey"]);
+    options.UseDefaultCredentials(builder.Configuration["SecretKey"]
+        ?? throw new ArgumentException("""Set "SecretKey" in appsettings or secrets or env"""));
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(jwtOptions =>
         {

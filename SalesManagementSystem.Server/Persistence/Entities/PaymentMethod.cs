@@ -9,7 +9,7 @@ public sealed class PaymentMethod
     public Guid Id { get; set; }
 
     [Required]
-    public string Name { get; set; } = "";
+    public required string Name { get; set; }
 
     public Task<bool> IsNameDuplicate(AppDbContext dbContext, CancellationToken ct = default) =>
         dbContext.PaymentMethods.AnyAsync(p => EF.Functions.ILike(p.Name, Name), ct);

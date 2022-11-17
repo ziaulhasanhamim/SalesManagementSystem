@@ -18,13 +18,13 @@ public sealed class SalesEntry
     public DateTime TransactionTime { get; private set; }
 
     [Required]
-    public Guid PaymentMethodId { get; set; }
+    public required Guid PaymentMethodId { get; set; }
 
     [ForeignKey(nameof(PaymentMethodId))]
     public PaymentMethod? PaymentMethod { get; set; }
 
     [Required]
-    public Guid ProductId { get; set; }
+    public required Guid ProductId { get; set; }
 
     [ForeignKey(nameof(ProductId))]
     public Product? Product { get; set; }

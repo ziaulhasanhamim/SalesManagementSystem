@@ -22,11 +22,8 @@ public static class CustomerEndpoints
         {
             return HttpHelpers.BadRequest(vErrors);
         }
-        Customer customer = new()
-        {
-            Name = req.Name,
-        };
-        if (!customer.TrySetPhoneNumber(req.PhoneNumber, req.RegionCode))
+        var customer = Customer.Create(req.Name, req.PhoneNumber, req.RegionCode);
+        if (customer is null)
         {
             Dictionary<string, IEnumerable<string>> errors = new()
             {
@@ -51,7 +48,7 @@ public static class CustomerEndpoints
     public static async Task<IHttpResult> GetAll(AppDbContext dbContext, CancellationToken ct)
     {
         var customers = await dbContext.Customers
-            .ProjectToType<Customer>()
+            .ProjectToType<CustomerRes>()
             .ToListAsync(ct);
         return HttpResults.Ok(customers);
     }
