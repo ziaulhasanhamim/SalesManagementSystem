@@ -62,8 +62,10 @@ public sealed partial class ManagePage
 
     async Task ShowStockIncementDialog(ProductRes product)
     {
-        DialogParameters parameters = new();
-        parameters.Add("Product", product);
+        DialogParameters parameters = new()
+        {
+            { "Product", product }
+        };
         var dialogRef = DialogService.Show<AddStockDialog>($"Add Stock to {product.Name}", parameters);
         var result = await dialogRef.Result;
         if (result.Cancelled)

@@ -6,9 +6,9 @@ public static class PaymentMethodEndpoints
 {
     public static void Map(WebApplication app)
     {
-        app.MapPost("/api/payment-methods", Create);
-        app.MapGet("/api/payment-methods", GetAll);
-        app.MapGet("/api/payment-methods/{id}", Get);
+        app.MapPost("/api/payment-methods", Create).RequireAuthorization();
+        app.MapGet("/api/payment-methods", GetAll).RequireAuthorization();
+        app.MapGet("/api/payment-methods/{id}", Get).RequireAuthorization();
     }
 
     public static async ValueTask<IHttpResult> Create(

@@ -27,6 +27,10 @@ public sealed class CustomersClient
             Guard.IsNotNull(vError);
             return vError;
         }
+        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            return new UnauthorizedError();
+        }
         return new Error("Server didn't respond properly");
     }
 
@@ -38,6 +42,10 @@ public sealed class CustomersClient
             var customers = await response.Content.ReadFromJsonAsync<IReadOnlyList<CustomerRes>>(cancellationToken: ct);
             Guard.IsNotNull(customers);
             return Result.From(customers);
+        }
+        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            return new UnauthorizedError();
         }
         return new Error("Server didn't respond properly");
     }
@@ -52,13 +60,16 @@ public sealed class CustomersClient
             : $"/api/customers/search-name/{name}";
 
         var response = await _httpClient.GetAsync(uri, ct);
-        Console.WriteLine($"\n\n\n\nc{await response.Content.ReadAsStringAsync()}\n\n\n\n");
         if (response.IsSuccessStatusCode)
         {
             var customers = await response.Content
                 .ReadFromJsonAsync<IReadOnlyList<CustomerRes>>(cancellationToken: ct);
             Guard.IsNotNull(customers);
             return Result.From(customers);
+        }
+        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            return new UnauthorizedError();
         }
         return new Error("Server didn't respond properly");
     }
@@ -78,6 +89,10 @@ public sealed class CustomersClient
                 .ReadFromJsonAsync<IReadOnlyList<CustomerRes>>(cancellationToken: ct);
             Guard.IsNotNull(customers);
             return Result.From(customers);
+        }
+        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            return new UnauthorizedError();
         }
         return new Error("Server didn't respond properly");
     }

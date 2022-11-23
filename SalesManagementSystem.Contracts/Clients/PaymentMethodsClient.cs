@@ -27,6 +27,10 @@ public sealed class PaymentMethodsClient
             Guard.IsNotNull(vError);
             return vError;
         }
+        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            return new UnauthorizedError();
+        }
         return new Error("Server didn't respond properly");
     }
 
@@ -38,6 +42,10 @@ public sealed class PaymentMethodsClient
             var payments = await response.Content.ReadFromJsonAsync<IReadOnlyList<PaymentMethodRes>>(cancellationToken: ct);
             Guard.IsNotNull(payments);
             return Result.From(payments);
+        }
+        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            return new UnauthorizedError();
         }
         return new Error("Server didn't respond properly");
     }

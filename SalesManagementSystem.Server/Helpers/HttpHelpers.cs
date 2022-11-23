@@ -1,6 +1,6 @@
 namespace SalesManagementSystem.Server.Helpers;
 
-public static class HttpHelpers
+static class HttpHelpers
 {
     public static IHttpResult BadRequest(
         IDictionary<string, IEnumerable<string>> errors,

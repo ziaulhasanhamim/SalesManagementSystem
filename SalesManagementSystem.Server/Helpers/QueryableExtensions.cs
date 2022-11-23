@@ -2,7 +2,7 @@ namespace SalesManagementSystem.Server.Helpers;
 
 using System.Linq.Expressions;
 
-public static class QueryableExtensions
+static class QueryableExtensions
 {
     public static IQueryable<T> TakeIfNotNull<T>(
         this IQueryable<T> queryable,

@@ -12,14 +12,15 @@ using SalesManagementSystem.Server.Persistence;
 namespace SalesManagementSystem.Server.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20221013150053_IntialCreate")]
-    partial class IntialCreate
+    [Migration("20221123120439_InitialCreate")]
+    partial class InitialCreate
     {
+        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.9")
+                .HasAnnotation("ProductVersion", "7.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "pg_trgm");
@@ -135,6 +136,40 @@ namespace SalesManagementSystem.Server.Persistence.Migrations
                     b.HasIndex("TransactionTime");
 
                     b.ToTable("SalesEntries");
+                });
+
+            modelBuilder.Entity("SalesManagementSystem.Server.Persistence.Entities.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("LastLogin")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NormalizedEmail")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Role")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail");
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("SalesManagementSystem.Server.Persistence.Entities.SalesEntry", b =>

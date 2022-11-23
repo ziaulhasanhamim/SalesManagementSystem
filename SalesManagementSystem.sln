@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalesManagementSystem.Serve
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalesManagementSystem.Contracts", "SalesManagementSystem.Contracts\SalesManagementSystem.Contracts.csproj", "{FFDF5521-4FC4-4039-A0A6-9ACD2C482375}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalesManagementSystem.Wasm", "SalesManagementSystem.Wasm\SalesManagementSystem.Wasm.csproj", "{63FCAF55-2155-4CDD-AA0C-5A8B80539D6E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{FFDF5521-4FC4-4039-A0A6-9ACD2C482375}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FFDF5521-4FC4-4039-A0A6-9ACD2C482375}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FFDF5521-4FC4-4039-A0A6-9ACD2C482375}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63FCAF55-2155-4CDD-AA0C-5A8B80539D6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63FCAF55-2155-4CDD-AA0C-5A8B80539D6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63FCAF55-2155-4CDD-AA0C-5A8B80539D6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63FCAF55-2155-4CDD-AA0C-5A8B80539D6E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

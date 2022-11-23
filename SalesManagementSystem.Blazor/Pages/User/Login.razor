@@ -1,0 +1,48 @@
+@page "/users/login"
+
+<PageTitle>Login</PageTitle>
+
+<MudText Typo="Typo.h4" Class="mt-2 mb-3" >Login in to your account</MudText>
+
+<EditForm EditContext="_formCtx" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <MudGrid>
+        @if (_loading)
+        {
+            <MudProgressLinear Color="Color.Secondary" Indeterminate="true" />
+        }
+        <MudItem xs="12" sm="12">
+            <MudCard>
+                <MudCardContent>
+                    <MudTextField 
+                        Label="Email" 
+                        HelperText="User email addr"
+                        InputType="InputType.Email"
+                        @bind-Value="_input.Email" 
+                        For="() => _input.Email" />
+
+                    <MudTextField
+                        InputType="InputType.Password"
+                        Label="Password" 
+                        @bind-Value="_input.Password" 
+                        For="() => _input.Password" />
+                        
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton 
+                        ButtonType="ButtonType.Submit" 
+                        Variant="Variant.Filled" 
+                        Color="Color.Primary"
+                        Class="ml-auto">
+                        Login
+                    </MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+        <MudItem xs="12">
+            <MudText Typo="Typo.body2" Align="Align.Center">
+                Fill out the form correctly to login
+            </MudText>
+        </MudItem>
+    </MudGrid>
+</EditForm>

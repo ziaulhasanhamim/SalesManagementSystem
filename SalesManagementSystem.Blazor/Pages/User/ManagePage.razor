@@ -1,0 +1,33 @@
+@page "/users/"
+@attribute [Authorize(Roles = UserRoles.Admin)]
+@using SalesManagementSystem.Contracts.User
+
+<PageTitle>Manage Users</PageTitle>
+
+<MudText Typo="Typo.h4">Manage your Users</MudText>
+<MudSpacer />
+
+<MudTable Items="_users" Loading="_loading">
+    <ToolBarContent>
+        <MudIconButton Class="me-1" Link="/users/add?returnUrl=/users/" Icon="@Icons.Filled.Add" Variant="Variant.Filled" Color="Color.Primary"></MudIconButton>
+        <MudIconButton OnClick="LoadData" Icon="@Icons.Filled.Refresh" Variant="Variant.Filled" Color="Color.Primary"></MudIconButton>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Id</MudTh>
+        <MudTh>Email</MudTh>
+        <MudTh>Role</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Id">@context.Id</MudTd>
+        <MudTd DataLabel="Name">@context.Email</MudTd>
+        <MudTd DataLabel="Selling Price">@context.Role</MudTd>
+    </RowTemplate>
+    
+    <LoadingContent>
+        <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true"/>
+    </LoadingContent>
+
+    <NoRecordsContent>
+        <MudText Typo="Typo.h6">No Users to show</MudText>
+    </NoRecordsContent>
+</MudTable>

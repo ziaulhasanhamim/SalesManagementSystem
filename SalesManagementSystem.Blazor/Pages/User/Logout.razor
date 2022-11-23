@@ -1,0 +1,17 @@
+@page "/users/logout"
+@attribute [Authorize]
+@inject IJSRuntime JsRuntime
+@inject NavigationManager NavigationManager
+@inject IAuthService AuthService
+
+<MudText>You are logged in as @AuthService.User!.Email</MudText>
+<MudAlert Severity="Severity.Warning" Variant="Variant.Outlined">You can logout by clicking the button below</MudAlert>
+<MudButton OnClick="LogoutUser" Color="Color.Error">Logout</MudButton>
+
+@code {
+    async Task LogoutUser()
+    {
+        await JsRuntime.InvokeVoidAsync("localStorage.removeItem", "auth");
+        await AuthService.Authorize();
+    }
+}

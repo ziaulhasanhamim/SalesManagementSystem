@@ -1,4 +1,5 @@
 @page "/products/"
+@attribute [Authorize]
 @using SalesManagementSystem.Contracts.Product
 
 <PageTitle>Manage Products</PageTitle>
@@ -16,7 +17,11 @@
     <HeaderContent>
         <MudTh>Id</MudTh>
         <MudTh>Name</MudTh>
-        <MudTh>Buying Price</MudTh>
+        <AuthorizeView Roles="@UserRoles.Admin" Context="hide">
+            <Authorized>
+                <MudTh>Buying Price</MudTh>
+            </Authorized>
+        </AuthorizeView>
         <MudTh>Selling Price</MudTh>
         <MudTh>Stock Count</MudTh>
         <MudTh></MudTh>
@@ -24,7 +29,11 @@
     <RowTemplate>
         <MudTd DataLabel="Id">@context.Id</MudTd>
         <MudTd DataLabel="Name">@context.Name</MudTd>
-        <MudTd DataLabel="Buying Price">@context.BuyingPrice</MudTd>
+        <AuthorizeView Roles="@UserRoles.Admin" Context="hide">
+            <Authorized>
+                <MudTd DataLabel="Buying Price">@context.BuyingPrice</MudTd>
+            </Authorized>
+        </AuthorizeView>
         <MudTd DataLabel="Selling Price">@context.SellingPrice</MudTd>
         <MudTd DataLabel="Stock Count">@context.StockCount</MudTd>
         <MudTd>

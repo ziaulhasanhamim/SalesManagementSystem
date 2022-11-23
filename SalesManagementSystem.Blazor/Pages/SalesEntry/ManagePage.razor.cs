@@ -12,7 +12,10 @@ public sealed partial class ManagePage
     IReadOnlyList<SalesEntryRes> _salesEntries = Array.Empty<SalesEntryRes>();
 
     [Inject]
-    public SalesEntriesClient SalesEntriesClient { get; set; } = null!;
+    public required SalesEntriesClient SalesEntriesClient { get; set; }
+
+    [Inject]
+    public required IAuthService AuthService { get; set; }
 
     SalesOfType SalesOf
     {
@@ -49,18 +52,21 @@ public sealed partial class ManagePage
     {
         _loading = true;
         StateHasChanged();
-        var salesDataResult = await SalesEntriesClient.GetSalesData(Days);
-        if (salesDataResult.IsFailure)
-        {
-            throw new Exception(salesDataResult.Error.Message);
-        }
-        _salesData = salesDataResult.Value;
         var salesResult = await SalesEntriesClient.GetSales(Days);
         if (salesResult.IsFailure)
         {
             throw new Exception(salesResult.Error.Message);
         }
         _salesEntries = salesResult.Value;
+        if (AuthService.User!.Role == UserRoles.Admin)
+        {
+            var salesDataResult = await SalesEntriesClient.GetSalesData(Days);
+            if (salesDataResult.IsFailure)
+            {
+                throw new Exception(salesDataResult.Error.Message);
+            }
+            _salesData = salesDataResult.Value;
+        }
         _loading = false;
     }
 

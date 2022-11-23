@@ -3,7 +3,7 @@ namespace SalesManagementSystem.Server.Helpers;
 using System.Diagnostics.CodeAnalysis;
 using PhoneNumbers;
 
-public static class PhoneNumberUtilHelpers
+static class PhoneNumberUtilHelpers
 {
     public static bool TryParse(this PhoneNumberUtil util, string number, string? regionCode, [NotNullWhen(true)]out PhoneNumber? phoneNumber)
     {

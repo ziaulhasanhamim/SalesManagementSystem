@@ -1,6 +1,16 @@
-﻿<Router AppAssembly="@typeof(App).Assembly">
+﻿@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+<CascadingAuthenticationState />
+<Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+            <NotAuthorized>
+                @{
+                    redirect();
+                }
+            </NotAuthorized>
+        </AuthorizeRouteView>
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
     </Found>
     <NotFound>
@@ -10,3 +20,11 @@
         </LayoutView>
     </NotFound>
 </Router>
+
+@code {
+    void redirect()
+    {
+        var path = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        NavigationManager.NavigateTo($"/users/login/?returnUrl={path}");
+    }
+}

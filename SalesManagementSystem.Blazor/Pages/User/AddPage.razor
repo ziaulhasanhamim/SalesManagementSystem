@@ -1,0 +1,59 @@
+@page "/users/add"
+@attribute [Authorize(Roles = UserRoles.Admin)]
+
+<PageTitle>Add new user</PageTitle>
+
+<MudText Typo="Typo.h4" Class="mt-2 mb-3" >Add new user</MudText>
+
+<EditForm EditContext="_formCtx" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <MudGrid>
+        @if (_loading)
+        {
+            <MudProgressLinear Color="Color.Secondary" Indeterminate="true" />
+        }
+        <MudItem xs="12" sm="12">
+            <MudCard>
+                <MudCardContent>
+                    <MudTextField 
+                        Label="Email" 
+                        InputType="InputType.Email"
+                        HelperText="Email Address" 
+                        @bind-Value="_input.Email" 
+                        For="() => _input.Email" />
+
+                    <MudTextField 
+                        Label="Password" 
+                        InputType="InputType.Password"
+                        @bind-Value="_input.Password" 
+                        For="() => _input.Password" />
+
+                    <MudSelect 
+                        Label="Role" 
+                        @bind-Value="_input.Role" 
+                        AnchorOrigin="Origin.BottomCenter">
+
+                        <MudSelectItem Value="@UserRoles.Seller" />
+                        <MudSelectItem Value="@UserRoles.Admin" />
+                        
+                    </MudSelect>
+
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton 
+                        ButtonType="ButtonType.Submit" 
+                        Variant="Variant.Filled" 
+                        Color="Color.Primary"
+                        Class="ml-auto">
+                        Add
+                    </MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+        <MudItem xs="12">
+            <MudText Typo="Typo.body2" Align="Align.Center">
+                Fill out the form correctly to add an User
+            </MudText>
+        </MudItem>
+    </MudGrid>
+</EditForm>

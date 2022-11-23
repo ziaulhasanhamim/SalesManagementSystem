@@ -1,4 +1,5 @@
 @page "/sales/"
+@attribute [Authorize]
 
 <PageTitle>Manage Sales</PageTitle>
 
@@ -23,8 +24,12 @@
         <MudTh>Product</MudTh>
         <MudTh>Quantity</MudTh>
         <MudTh>Sold Price</MudTh>
-        <MudTh>Buying Price</MudTh>
-        <MudTh>Profit</MudTh>
+        <AuthorizeView Roles="@UserRoles.Admin" Context="hide">
+            <Authorized>
+                <MudTh>Buying Price</MudTh>
+                <MudTh>Profit</MudTh>
+            </Authorized>
+        </AuthorizeView>
         <MudTh>Payment Method</MudTh>
         <MudTh>Customer Name</MudTh>
         <MudTh>Customer Number</MudTh>
@@ -35,8 +40,12 @@
         <MudTd DataLabel="Name">@context.ProductName</MudTd>
         <MudTd DataLabel="Quantity">@context.Quantity</MudTd>
         <MudTd DataLabel="SoldPrice">@context.SoldPrice</MudTd>
-        <MudTd DataLabel="Buying Price">@context.BuyingPrice</MudTd>
-        <MudTd DataLabel="Profit">@context.Profit</MudTd>
+        <AuthorizeView Roles="@UserRoles.Admin" Context="hide">
+            <Authorized>
+                <MudTd DataLabel="Buying Price">@context.BuyingPrice</MudTd>
+                <MudTd DataLabel="Profit">@context.Profit</MudTd>
+            </Authorized>
+        </AuthorizeView>
         <MudTd DataLabel="Payment Method">@context.PaymentMethod</MudTd>
         <MudTd DataLabel="Customer Name">@context.CustomerName</MudTd>
         <MudTd DataLabel="Customer Number">@context.CustomerPhoneNumber</MudTd>
@@ -44,17 +53,21 @@
     </RowTemplate>
 
     <FooterContent>
-        <MudTFootRow>
-            <MudTd colspan="4">
-                <MudText Color="Color.Info" Typo="Typo.button">Net Sales = @_salesData?.NetSales</MudText>
-            </MudTd>
-            <MudTd colspan="4">
-                <MudText Color="Color.Error" Typo="Typo.button">Net Cost = @_salesData?.NetCost</MudText>
-            </MudTd>
-            <MudTd colspan="3">
-                <MudText Color="Color.Success" Typo="Typo.button">Net Profit = @_salesData?.NetProfit</MudText>
-            </MudTd>
-        </MudTFootRow>
+        <AuthorizeView Roles="@UserRoles.Admin">
+            <Authorized>
+                <MudTFootRow>
+                    <MudTd colspan="4">
+                        <MudText Color="Color.Info" Typo="Typo.button">Net Sales = @_salesData?.NetSales</MudText>
+                    </MudTd>
+                    <MudTd colspan="4">
+                        <MudText Color="Color.Error" Typo="Typo.button">Net Cost = @_salesData?.NetCost</MudText>
+                    </MudTd>
+                    <MudTd colspan="3">
+                        <MudText Color="Color.Success" Typo="Typo.button">Net Profit = @_salesData?.NetProfit</MudText>
+                    </MudTd>
+                </MudTFootRow>
+            </Authorized>
+        </AuthorizeView>
     </FooterContent>
     
     <LoadingContent>

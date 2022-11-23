@@ -1,5 +1,7 @@
 namespace SalesManagementSystem.Server.Endpoints;
 
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using SalesManagementSystem.Contracts.Product;
 
@@ -7,11 +9,12 @@ public static class ProductEndpoints
 {
     public static void Map(WebApplication app)
     {
-        app.MapPost("/api/products", Create);
-        app.MapGet("/api/products", GetAll);
-        app.MapGet("/api/products/{id}", Get);
-        app.MapGet("/api/products/search/{text?}", Search);
-        app.MapPost("/api/products/incement-stock", IncrementStock);
+        app.MapPost("/api/products", Create)
+            .RequireAuthorization(options => options.RequireRole(UserRoles.Admin));
+        app.MapGet("/api/products", GetAll).RequireAuthorization();
+        app.MapGet("/api/products/{id}", Get).RequireAuthorization();
+        app.MapGet("/api/products/search/{text?}", Search).RequireAuthorization();
+        app.MapPost("/api/products/incement-stock", IncrementStock).RequireAuthorization();
     }
 
     public static async ValueTask<IHttpResult> Create(
@@ -40,24 +43,51 @@ public static class ProductEndpoints
         }
         await dbContext.AddAsync(product, ct);
         await dbContext.SaveChangesAsync(ct);
-        var res = product.Adapt<ProductRes>();
+        var res = new ProductRes(
+            product.Id,
+            product.Name,
+            product.BuyingPrice,
+            product.SellingPrice,
+            product.StockCount
+        );
         var uri = $"/api/products/{product.Id}";
         return HttpResults.Created(uri, res);
     }
 
-    public static async Task<IHttpResult> GetAll(AppDbContext dbContext, CancellationToken ct)
+    public static async Task<IHttpResult> GetAll(
+        HttpContext ctx,
+        AppDbContext dbContext,
+        CancellationToken ct)
     {
+        var isAdmin = ctx.User.HasClaim(ClaimTypes.Role, UserRoles.Admin);
         var products = await dbContext.Products
-            .ProjectToType<ProductRes>()
+            .Select(p => new ProductRes(
+                p.Id,
+                p.Name,
+                isAdmin ? p.BuyingPrice : default,
+                p.SellingPrice,
+                p.StockCount
+            ))
             .ToListAsync(ct);
         return HttpResults.Ok(products);
     }
 
-    public static async Task<IHttpResult> Get(Guid id, AppDbContext dbContext, CancellationToken ct)
+    public static async Task<IHttpResult> Get(
+        Guid id,
+        HttpContext ctx,
+        AppDbContext dbContext,
+        CancellationToken ct)
     {
+        var isAdmin = ctx.User.HasClaim(ClaimTypes.Role, UserRoles.Admin);
         var product = await dbContext.Products
             .Where(p => p.Id == id)
-            .ProjectToType<ProductRes>()
+            .Select(p => new ProductRes(
+                p.Id,
+                p.Name,
+                isAdmin ? p.BuyingPrice : default,
+                p.SellingPrice,
+                p.StockCount
+            ))
             .FirstOrDefaultAsync(ct);
         return product switch
         {
@@ -68,16 +98,24 @@ public static class ProductEndpoints
 
     public static async Task<IHttpResult> Search(
         string? text,
+        HttpContext ctx,
         AppDbContext dbContext,
         CancellationToken ct,
         int? count)
     {
+        var isAdmin = ctx.User.HasClaim(ClaimTypes.Role, UserRoles.Admin);
         var products = await dbContext.Products
             .WhereIf(
                 !string.IsNullOrEmpty(text),
                 p => EF.Functions.ILike(p.Name, $"%{text}%"))
             .TakeIfNotNull(count < 1 ? 20 : count)
-            .ProjectToType<ProductRes>()
+            .Select(p => new ProductRes(
+                p.Id,
+                p.Name,
+                isAdmin ? p.BuyingPrice : default,
+                p.SellingPrice,
+                p.StockCount
+            ))
             .ToListAsync(ct);
         return HttpResults.Ok(products);
     }
@@ -89,10 +127,14 @@ public static class ProductEndpoints
         {
             return HttpHelpers.BadRequest(vErrors);
         }
-        var product = await dbContext.Products.FindAsync(
-            new object[] { req.Id },
-            cancellationToken: ct);
-        if (product is null)
+        var updateCount = await dbContext.Products
+            .Where(p => p.Id == req.Id)
+            .ExecuteUpdateAsync(
+                s => s.SetProperty(
+                    p => p.StockCount,
+                    p => p.StockCount + req.StockCount),
+                ct);
+        if (updateCount is not 1)
         {
             Dictionary<string, IEnumerable<string>> errors = new()
             {
@@ -100,8 +142,6 @@ public static class ProductEndpoints
             };
             return HttpHelpers.BadRequest(errors);
         }
-        product.AddStock(req.StockCount);
-        await dbContext.SaveChangesAsync(ct);
-        return HttpResults.Ok(product.Adapt<ProductRes>());
+        return HttpResults.Ok();
     }
 }

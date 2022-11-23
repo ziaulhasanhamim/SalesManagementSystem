@@ -23,8 +23,6 @@ public sealed class Product
     public Task<bool> IsNameDuplicate(AppDbContext dbContext, CancellationToken ct = default) =>
         dbContext.Products.AnyAsync(p => EF.Functions.ILike(p.Name, Name), ct);
 
-    public void AddStock(int count) => StockCount += count;
-
     public bool TryRemoveStock(int count)
     {
         if (StockCount < count)

@@ -27,6 +27,10 @@ public sealed class ProductsClient
             Guard.IsNotNull(vError);
             return vError;
         }
+        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            return new UnauthorizedError();
+        }
         return new Error("Server didn't respond properly");
     }
 
@@ -38,6 +42,10 @@ public sealed class ProductsClient
             var products = await response.Content.ReadFromJsonAsync<IReadOnlyList<ProductRes>>(cancellationToken: ct);
             Guard.IsNotNull(products);
             return Result.From(products);
+        }
+        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            return new UnauthorizedError();
         }
         return new Error("Server didn't respond properly");
     }
@@ -57,10 +65,14 @@ public sealed class ProductsClient
             Guard.IsNotNull(products);
             return Result.From(products);
         }
+        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            return new UnauthorizedError();
+        }
         return new Error("Server didn't respond properly");
     }
 
-    public async Task<Result<ProductRes>> IncrementStock(
+    public async Task<Result> IncrementStock(
         StockIncrementReq req,
         CancellationToken ct = default)
     {
@@ -68,15 +80,17 @@ public sealed class ProductsClient
             "/api/products/incement-stock", req, ct);
         if (response.IsSuccessStatusCode)
         {
-            var products = await response.Content.ReadFromJsonAsync<ProductRes>(cancellationToken: ct);
-            Guard.IsNotNull(products);
-            return products;
+            return Result.Success;
         }
         if (response.StatusCode == HttpStatusCode.BadRequest)
         {
             var vError = await response.Content.ReadFromJsonAsync<ValidationErrorRes>(cancellationToken: ct);
             Guard.IsNotNull(vError);
             return vError;
+        }
+        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            return new UnauthorizedError();
         }
         return new Error("Server didn't respond properly");
     }

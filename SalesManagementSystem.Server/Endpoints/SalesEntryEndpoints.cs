@@ -1,24 +1,27 @@
 namespace SalesManagementSystem.Server.Endpoints;
 
+using System.Security.Claims;
 using SalesManagementSystem.Contracts.SalesEntry;
 
 public static class SalesEntryEndpoints
 {
     public static void Map(WebApplication app)
     {
-        app.MapPost("/api/sales-entries", Create);
-        app.MapGet("/api/sales-entries/{id}", Get);
-        app.MapGet("/api/sales/{dt?}", GetAllSales);
-        app.MapGet("/api/sales-data/{dt?}", GetSalesData);
+        app.MapPost("/api/sales-entries", Create).RequireAuthorization();
+        app.MapGet("/api/sales-entries/{id}", Get).RequireAuthorization();
+        app.MapGet("/api/sales/{dt?}", GetAllSales).RequireAuthorization();
+        app.MapGet("/api/sales-data/{dt?}", GetSalesData)
+            .RequireAuthorization(options => options.RequireRole(UserRoles.Admin));
     }
 
     public static async ValueTask<IHttpResult> Create(
-        CreateReq req, AppDbContext dbContext, CancellationToken ct)
+        CreateReq req, HttpContext ctx, AppDbContext dbContext, CancellationToken ct)
     {
         if (!MiniValidator.TryValidate(req, out var vErrors))
         {
             return HttpHelpers.BadRequest(vErrors);
         }
+        var isAdmin = ctx.User.HasClaim(ClaimTypes.Role, UserRoles.Admin);
         var validationResult = await ValidateIds(dbContext, req, ct);
         if (validationResult.IsFailure)
         {
@@ -42,7 +45,7 @@ public static class SalesEntryEndpoints
             product.Name,
             salesEntry.Quantity,
             salesEntry.SoldPrice,
-            product.BuyingPrice,
+            isAdmin ? salesEntry.Product!.BuyingPrice : default,
             paymentMethod.Name,
             salesEntry.TransactionTime,
             customer?.PhoneNumber,
@@ -51,8 +54,10 @@ public static class SalesEntryEndpoints
         var uri = $"/api/sales-entry/{res.Id}";
         return HttpResults.Created(uri, res);
     }
-    public static async Task<IHttpResult> Get(Guid id, AppDbContext dbContext, CancellationToken ct)
+    public static async Task<IHttpResult> Get(
+        Guid id, HttpContext ctx, AppDbContext dbContext, CancellationToken ct)
     {
+        var isAdmin = ctx.User.HasClaim(ClaimTypes.Role, UserRoles.Admin);
         var saleEntry = await dbContext.SalesEntries
             .Where(p => p.Id == id)
             .Select(s => new SalesEntryRes(
@@ -60,7 +65,7 @@ public static class SalesEntryEndpoints
                 s.Product!.Name,
                 s.Quantity,
                 s.SoldPrice,
-                s.Product.BuyingPrice,
+                isAdmin ? s.Product.BuyingPrice : default,
                 s.PaymentMethod!.Name,
                 s.TransactionTime,
                 s.Customer!.PhoneNumber,
@@ -74,8 +79,10 @@ public static class SalesEntryEndpoints
         };
     }
 
-    public static async Task<IHttpResult> GetAllSales(DateTime? dt, AppDbContext dbContext, CancellationToken ct)
+    public static async Task<IHttpResult> GetAllSales(
+        DateTime? dt, HttpContext ctx, AppDbContext dbContext, CancellationToken ct)
     {
+        var isAdmin = ctx.User.HasClaim(ClaimTypes.Role, UserRoles.Admin);
         var dtUtc = dt?.ToUniversalTime();
         var salesEntries = await dbContext.SalesEntries
             .WhereIf(dtUtc is not null, p => p.TransactionTime >= dtUtc)
@@ -85,7 +92,7 @@ public static class SalesEntryEndpoints
                 s.Product!.Name,
                 s.Quantity,
                 s.SoldPrice,
-                s.Product.BuyingPrice,
+                isAdmin ? s.Product.BuyingPrice : default,
                 s.PaymentMethod!.Name,
                 s.TransactionTime,
                 s.Customer!.PhoneNumber,

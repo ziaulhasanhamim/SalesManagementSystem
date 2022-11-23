@@ -27,6 +27,10 @@ public sealed class SalesEntriesClient
             Guard.IsNotNull(vError);
             return vError;
         }
+        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            return new UnauthorizedError();
+        }
         return new Error("Server didn't respond properly");
     }
 
@@ -44,6 +48,10 @@ public sealed class SalesEntriesClient
             Guard.IsNotNull(salesEntries);
             return Result.From(salesEntries);
         }
+        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            return new UnauthorizedError();
+        }
         return new Error("Server didn't respond properly");
     }
 
@@ -60,6 +68,10 @@ public sealed class SalesEntriesClient
                 .ReadFromJsonAsync<SalesDataRes>(cancellationToken: ct);
             Guard.IsNotNull(salesData);
             return Result.From(salesData);
+        }
+        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            return new UnauthorizedError();
         }
         return new Error("Server didn't respond properly");
     }

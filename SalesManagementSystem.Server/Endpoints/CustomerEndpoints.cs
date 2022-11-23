@@ -8,11 +8,11 @@ public static class CustomerEndpoints
 {
     public static void Map(WebApplication app)
     {
-        app.MapPost("/api/customers", Create);
-        app.MapGet("/api/customers", GetAll);
-        app.MapGet("/api/customers/{id}", Get);
-        app.MapGet("/api/customers/search-name/{name?}", SearchByName);
-        app.MapGet("/api/customers/search-number/{number?}", SearchByPhoneNumber);
+        app.MapPost("/api/customers", Create).RequireAuthorization();
+        app.MapGet("/api/customers", GetAll).RequireAuthorization();
+        app.MapGet("/api/customers/{id}", Get).RequireAuthorization();
+        app.MapGet("/api/customers/search-name/{name?}", SearchByName).RequireAuthorization();
+        app.MapGet("/api/customers/search-number/{number?}", SearchByPhoneNumber).RequireAuthorization();
     }
 
     public static async ValueTask<IHttpResult> Create(

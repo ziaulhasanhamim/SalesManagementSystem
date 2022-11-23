@@ -13,22 +13,25 @@
 		<PackageReference Include="FastJwtAuth.EFCore" Version="0.6.0" />
 		<PackageReference Include="libphonenumber-csharp" Version="8.12.56" />
 		<PackageReference Include="Mapster" Version="7.3.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.10" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.9">
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="7.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.0">
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		  <PrivateAssets>all</PrivateAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="6.0.10" />
+		<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="7.0.0" />
 		<PackageReference Include="MiniValidation" Version="0.6.0-pre.20220527.55" />
 		<PackageReference Include="Nopen.NET" Version="1.0.1" />
-		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.7" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.0" />
 		<PackageReference Include="OneOf" Version="3.0.223" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\SalesManagementSystem.Blazor\SalesManagementSystem.Blazor.csproj" />
 		<ProjectReference Include="..\SalesManagementSystem.Contracts\SalesManagementSystem.Contracts.csproj" />
+		<ProjectReference Include="..\SalesManagementSystem.Wasm\SalesManagementSystem.Wasm.csproj" />
 	</ItemGroup>
 
 </Project>
