@@ -49,7 +49,11 @@ void addHttpClient()
         };
         var httpClient = new HttpClient(handler)
         {
-            BaseAddress = new(BuildConfigurations.BaseUrl ?? builder.HostEnvironment.BaseAddress)
+            BaseAddress = new(BuildConfigurations.BaseUrl switch
+            {
+                null or "" => builder.HostEnvironment.BaseAddress,
+                var val => val
+            })
         };
         return httpClient;
     });

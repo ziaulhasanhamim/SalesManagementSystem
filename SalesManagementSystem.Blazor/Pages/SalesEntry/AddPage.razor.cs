@@ -126,7 +126,6 @@ public sealed partial class AddPage
         [Required]
         public PaymentContracts.PaymentMethodRes? PaymentMethod { get; set; }
 
-        [Required]
         public CustomerContracts.CustomerRes? Customer { get; set; }
     }
 }
