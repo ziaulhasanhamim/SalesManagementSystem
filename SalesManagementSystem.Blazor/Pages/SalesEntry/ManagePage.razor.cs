@@ -61,15 +61,12 @@ public sealed partial class ManagePage
             throw new Exception(salesResult.Error.Message);
         }
         _salesEntries = salesResult.Value;
-        if (AuthService.User!.Role == UserRoles.Admin)
+        var salesDataResult = await SalesEntriesClient.GetSalesData(Days);
+        if (salesDataResult.IsFailure)
         {
-            var salesDataResult = await SalesEntriesClient.GetSalesData(Days);
-            if (salesDataResult.IsFailure)
-            {
-                throw new Exception(salesDataResult.Error.Message);
-            }
-            _salesData = salesDataResult.Value;
+            throw new Exception(salesDataResult.Error.Message);
         }
+        _salesData = salesDataResult.Value;
         _loading = false;
     }
 

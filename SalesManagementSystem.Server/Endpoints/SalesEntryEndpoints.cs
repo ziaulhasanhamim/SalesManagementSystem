@@ -12,8 +12,7 @@ public static class SalesEntryEndpoints
         app.MapDelete("/api/sales-entries/{id}", Delete)
             .RequireAuthorization(options => options.RequireRole(UserRoles.Admin));
         app.MapGet("/api/sales/{dt?}", GetAllSales).RequireAuthorization();
-        app.MapGet("/api/sales-data/{dt?}", GetSalesData)
-            .RequireAuthorization(options => options.RequireRole(UserRoles.Admin));
+        app.MapGet("/api/sales-data/{dt?}", GetSalesData);
     }
 
     public static async ValueTask<IHttpResult> Create(
@@ -119,12 +118,20 @@ public static class SalesEntryEndpoints
         return HttpResults.Ok(salesEntries);
     }
 
-    public static async Task<IHttpResult> GetSalesData(DateTime? dt, AppDbContext dbContext, CancellationToken ct)
+    public static async Task<IHttpResult> GetSalesData(
+        DateTime? dt,
+        HttpContext ctx,
+        AppDbContext dbContext,
+        CancellationToken ct)
     {
         var dtUtc = dt?.ToUniversalTime();
         var query = dbContext.SalesEntries
             .WhereIf(dtUtc is not null, p => p.TransactionTime >= dtUtc);
-        var netCost = await query.SumAsync(s => (long)s.Product!.BuyingPrice * s.Quantity, cancellationToken: ct);
+        var netCost = ctx.User.HasClaim(ClaimTypes.Role, UserRoles.Admin) switch
+        {
+            true => await query.SumAsync(s => (long)s.Product!.BuyingPrice * s.Quantity, cancellationToken: ct),
+            false => default
+        };
         var netSales = await query.SumAsync(s => (long)s.SoldPrice * s.Quantity, cancellationToken: ct);
         var salesData = new SalesDataRes(netSales, netCost);
         return HttpResults.Ok(salesData);
