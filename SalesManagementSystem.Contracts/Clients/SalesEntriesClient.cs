@@ -34,6 +34,20 @@ public sealed class SalesEntriesClient
         return new Error("Server didn't respond properly");
     }
 
+    public async Task<Result> Delete(Guid Id, CancellationToken ct = default)
+    {
+        var response = await _httpClient.DeleteAsync($"/api/sales-entries/{Id}", ct);
+        if (response.IsSuccessStatusCode)
+        {
+            return Result.Success;
+        }
+        if (response.StatusCode == HttpStatusCode.NotFound)
+        {
+            return new NotFoundError("Id not Found");
+        }
+        return new Error("Server didn't respond properly");
+    }
+
     public async Task<Result<IReadOnlyList<SalesEntryRes>>> GetSales(
         uint? days = null,
         CancellationToken ct = default)

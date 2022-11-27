@@ -23,7 +23,10 @@ public sealed record SalesEntryRes(
     string? CustomerName)
 {
     [JsonIgnore]
-    public int Profit => SoldPrice - BuyingPrice;
+    public int ProfitPerItem => SoldPrice - BuyingPrice;
+
+    [JsonIgnore]
+    public int Profit => ProfitPerItem * Quantity;
 }
 
 public sealed record SalesDataRes(

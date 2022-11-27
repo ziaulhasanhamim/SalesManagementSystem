@@ -9,6 +9,8 @@ public static class SalesEntryEndpoints
     {
         app.MapPost("/api/sales-entries", Create).RequireAuthorization();
         app.MapGet("/api/sales-entries/{id}", Get).RequireAuthorization();
+        app.MapDelete("/api/sales-entries/{id}", Delete)
+            .RequireAuthorization(options => options.RequireRole(UserRoles.Admin));
         app.MapGet("/api/sales/{dt?}", GetAllSales).RequireAuthorization();
         app.MapGet("/api/sales-data/{dt?}", GetSalesData)
             .RequireAuthorization(options => options.RequireRole(UserRoles.Admin));
@@ -79,6 +81,21 @@ public static class SalesEntryEndpoints
         };
     }
 
+    public static async Task<IHttpResult> Delete(
+        Guid id,
+        AppDbContext dbContext,
+        CancellationToken ct)
+    {
+        var deleted = await dbContext.SalesEntries
+            .Where(p => p.Id == id)
+            .ExecuteDeleteAsync(ct);
+        return deleted switch
+        {
+            1 => HttpResults.NoContent(),
+            _ => HttpResults.NotFound()
+        };
+    }
+
     public static async Task<IHttpResult> GetAllSales(
         DateTime? dt, HttpContext ctx, AppDbContext dbContext, CancellationToken ct)
     {
@@ -107,8 +124,8 @@ public static class SalesEntryEndpoints
         var dtUtc = dt?.ToUniversalTime();
         var query = dbContext.SalesEntries
             .WhereIf(dtUtc is not null, p => p.TransactionTime >= dtUtc);
-        var netCost = await query.SumAsync(s => (long)s.Product!.BuyingPrice, cancellationToken: ct);
-        var netSales = await query.SumAsync(s => (long)s.SoldPrice, cancellationToken: ct);
+        var netCost = await query.SumAsync(s => (long)s.Product!.BuyingPrice * s.Quantity, cancellationToken: ct);
+        var netSales = await query.SumAsync(s => (long)s.SoldPrice * s.Quantity, cancellationToken: ct);
         var salesData = new SalesDataRes(netSales, netCost);
         return HttpResults.Ok(salesData);
     }

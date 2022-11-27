@@ -21,7 +21,10 @@ public sealed partial class ManagePage
     }
 
     [Inject]
-    public CustomersClient CustomersClient { get; set; } = null!;
+    public required CustomersClient CustomersClient { get; set; }
+
+    [Inject]
+    public required IDialogService DialogService { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -57,5 +60,27 @@ public sealed partial class ManagePage
         await Task.Delay(500);
         await LoadData();
         StateHasChanged();
+    }
+
+    async Task ShowDeletePromt(CustomerRes customer)
+    {
+        DialogParameters parameters = new()
+        {
+            { "ContentText", "Are you sure you want to delete this customer?" },
+            { "ButtonText", "Delete" },
+            { "OkButtonColor", Color.Error }
+        };
+        var dialogRef = DialogService.Show<Prompt>("Delete customer", parameters);
+        var result = await dialogRef.Result;
+        if (result.Cancelled)
+        {
+            return;
+        }
+        var res = await CustomersClient.Delete(customer.Id);
+        if (res.IsFailure)
+        {
+            throw new Exception(res.Error.Message);
+        }
+        await LoadData();
     }
 }

@@ -27,6 +27,7 @@
         <AuthorizeView Roles="@UserRoles.Admin" Context="hide">
             <Authorized>
                 <MudTh>Buying Price</MudTh>
+                <MudTh>Profit Per Item</MudTh>
                 <MudTh>Profit</MudTh>
             </Authorized>
         </AuthorizeView>
@@ -34,6 +35,11 @@
         <MudTh>Customer Name</MudTh>
         <MudTh>Customer Number</MudTh>
         <MudTh>Transaction Time</MudTh>
+        <AuthorizeView Roles="@UserRoles.Admin" Context="hide">
+            <Authorized>
+                <MudTh></MudTh>
+            </Authorized>
+        </AuthorizeView>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Id" style="overflow: hidden;">@context.Id</MudTd>
@@ -43,6 +49,7 @@
         <AuthorizeView Roles="@UserRoles.Admin" Context="hide">
             <Authorized>
                 <MudTd DataLabel="Buying Price">@context.BuyingPrice</MudTd>
+                <MudTd DataLabel="Profit Per item">@context.ProfitPerItem</MudTd>
                 <MudTd DataLabel="Profit">@context.Profit</MudTd>
             </Authorized>
         </AuthorizeView>
@@ -50,6 +57,15 @@
         <MudTd DataLabel="Customer Name">@context.CustomerName</MudTd>
         <MudTd DataLabel="Customer Number">@context.CustomerPhoneNumber</MudTd>
         <MudTd DataLabel="Transaction Time">@context.TransactionTime</MudTd>
+        <AuthorizeView Roles="@UserRoles.Admin" Context="hide">
+            <Authorized>
+                <MudTd>
+                    <MudButton @onclick="() => ShowDeletePromt(context)" Variant="Variant.Filled" Color="Color.Error">
+                        Delete
+                    </MudButton>
+                </MudTd>
+            </Authorized>
+        </AuthorizeView>
     </RowTemplate>
 
     <FooterContent>

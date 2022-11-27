@@ -13,6 +13,8 @@ public static class ProductEndpoints
             .RequireAuthorization(options => options.RequireRole(UserRoles.Admin));
         app.MapGet("/api/products", GetAll).RequireAuthorization();
         app.MapGet("/api/products/{id}", Get).RequireAuthorization();
+        app.MapDelete("/api/products/{id}", Delete)
+            .RequireAuthorization(options => options.RequireRole(UserRoles.Admin));
         app.MapGet("/api/products/search/{text?}", Search).RequireAuthorization();
         app.MapPost("/api/products/incement-stock", IncrementStock).RequireAuthorization();
     }
@@ -93,6 +95,21 @@ public static class ProductEndpoints
         {
             not null => HttpResults.Ok(product),
             null => HttpResults.NotFound()
+        };
+    }
+
+    public static async Task<IHttpResult> Delete(
+        Guid id,
+        AppDbContext dbContext,
+        CancellationToken ct)
+    {
+        var deleted = await dbContext.Products
+            .Where(p => p.Id == id)
+            .ExecuteDeleteAsync(ct);
+        return deleted switch
+        {
+            1 => HttpResults.NoContent(),
+            _ => HttpResults.NotFound()
         };
     }
 

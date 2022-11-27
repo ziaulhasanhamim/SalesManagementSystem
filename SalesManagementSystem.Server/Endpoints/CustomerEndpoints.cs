@@ -11,6 +11,8 @@ public static class CustomerEndpoints
         app.MapPost("/api/customers", Create).RequireAuthorization();
         app.MapGet("/api/customers", GetAll).RequireAuthorization();
         app.MapGet("/api/customers/{id}", Get).RequireAuthorization();
+        app.MapDelete("/api/customers/{id}", Delete)
+            .RequireAuthorization(options => options.RequireRole(UserRoles.Admin));
         app.MapGet("/api/customers/search-name/{name?}", SearchByName).RequireAuthorization();
         app.MapGet("/api/customers/search-number/{number?}", SearchByPhoneNumber).RequireAuthorization();
     }
@@ -63,6 +65,21 @@ public static class CustomerEndpoints
         {
             not null => HttpResults.Ok(customer),
             null => HttpResults.NotFound()
+        };
+    }
+
+    public static async Task<IHttpResult> Delete(
+        Guid id,
+        AppDbContext dbContext,
+        CancellationToken ct)
+    {
+        var deleted = await dbContext.Customers
+            .Where(p => p.Id == id)
+            .ExecuteDeleteAsync(ct);
+        return deleted switch
+        {
+            1 => HttpResults.NoContent(),
+            _ => HttpResults.NotFound()
         };
     }
 

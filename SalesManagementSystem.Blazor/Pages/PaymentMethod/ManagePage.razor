@@ -14,10 +14,24 @@
     <HeaderContent>
         <MudTh>Id</MudTh>
         <MudTh>Name</MudTh>
+        <AuthorizeView Roles="@UserRoles.Admin" Context="hide">
+            <Authorized>
+            <MudTh></MudTh>
+            </Authorized>
+        </AuthorizeView>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Id">@context.Id</MudTd>
         <MudTd DataLabel="Name">@context.Name</MudTd>
+        <AuthorizeView Roles="@UserRoles.Admin" Context="hide">
+            <Authorized>
+                <MudTd>
+                    <MudButton @onclick="() => ShowDeletePromt(context)" Variant="Variant.Filled" Color="Color.Error">
+                        Delete
+                    </MudButton>
+                </MudTd>
+            </Authorized>
+        </AuthorizeView>
     </RowTemplate>
     
     <LoadingContent>

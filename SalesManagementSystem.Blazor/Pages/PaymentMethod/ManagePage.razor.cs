@@ -8,7 +8,10 @@ public sealed partial class ManagePage
     bool _loading = true;
 
     [Inject]
-    public PaymentMethodsClient PaymentsClient { get; set; } = null!;
+    public required PaymentMethodsClient PaymentsClient { get; set; }
+
+    [Inject]
+    public required IDialogService DialogService { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -27,5 +30,27 @@ public sealed partial class ManagePage
         }
         _payments = apiResult.Value;
         _loading = false;
+    }
+
+    async Task ShowDeletePromt(PaymentMethodRes paymentMethod)
+    {
+        DialogParameters parameters = new()
+        {
+            { "ContentText", "Are you sure you want to delete this?" },
+            { "ButtonText", "Delete" },
+            { "OkButtonColor", Color.Error }
+        };
+        var dialogRef = DialogService.Show<Prompt>("Delete Item", parameters);
+        var result = await dialogRef.Result;
+        if (result.Cancelled)
+        {
+            return;
+        }
+        var res = await PaymentsClient.Delete(paymentMethod.Id);
+        if (res.IsFailure)
+        {
+            throw new Exception(res.Error.Message);
+        }
+        await LoadData();
     }
 }

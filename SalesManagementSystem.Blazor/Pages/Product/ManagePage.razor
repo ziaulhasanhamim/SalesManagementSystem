@@ -25,6 +25,11 @@
         <MudTh>Selling Price</MudTh>
         <MudTh>Stock Count</MudTh>
         <MudTh></MudTh>
+        <AuthorizeView Roles="@UserRoles.Admin" Context="hide">
+            <Authorized>
+            <MudTh></MudTh>
+            </Authorized>
+        </AuthorizeView>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Id">@context.Id</MudTd>
@@ -41,6 +46,15 @@
                 Add Stock
             </MudButton>
         </MudTd>
+        <AuthorizeView Roles="@UserRoles.Admin" Context="hide">
+            <Authorized>
+                <MudTd>
+                    <MudButton @onclick="() => ShowDeletePromt(context)" Variant="Variant.Filled" Color="Color.Error">
+                        Delete
+                    </MudButton>
+                </MudTd>
+            </Authorized>
+        </AuthorizeView>
     </RowTemplate>
     
     <LoadingContent>

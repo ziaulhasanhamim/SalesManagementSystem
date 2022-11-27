@@ -20,10 +20,10 @@ public sealed partial class ManagePage
     }
 
     [Inject]
-    public ProductsClient ProductsClient { get; set; } = null!;
+    public required ProductsClient ProductsClient { get; set; }
 
     [Inject]
-    public IDialogService DialogService { get; set; } = null!;
+    public required IDialogService DialogService { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -71,6 +71,28 @@ public sealed partial class ManagePage
         if (result.Cancelled)
         {
             return;
+        }
+        await LoadData();
+    }
+
+    async Task ShowDeletePromt(ProductRes product)
+    {
+        DialogParameters parameters = new()
+        {
+            { "ContentText", $"Are you sure you want to delete this product? Name: {product.Name}" },
+            { "ButtonText", "Delete" },
+            { "OkButtonColor", Color.Error }
+        };
+        var dialogRef = DialogService.Show<Prompt>("Delete Product", parameters);
+        var result = await dialogRef.Result;
+        if (result.Cancelled)
+        {
+            return;
+        }
+        var res = await ProductsClient.Delete(product.Id);
+        if (res.IsFailure)
+        {
+            throw new Exception(res.Error.Message);
         }
         await LoadData();
     }

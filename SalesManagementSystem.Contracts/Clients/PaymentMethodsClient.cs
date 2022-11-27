@@ -34,6 +34,20 @@ public sealed class PaymentMethodsClient
         return new Error("Server didn't respond properly");
     }
 
+    public async Task<Result> Delete(Guid Id, CancellationToken ct = default)
+    {
+        var response = await _httpClient.DeleteAsync($"/api/payment-methods/{Id}", ct);
+        if (response.IsSuccessStatusCode)
+        {
+            return Result.Success;
+        }
+        if (response.StatusCode == HttpStatusCode.NotFound)
+        {
+            return new NotFoundError("Id not Found");
+        }
+        return new Error("Server didn't respond properly");
+    }
+
     public async Task<Result<IReadOnlyList<PaymentMethodRes>>> GetAll(CancellationToken ct = default)
     {
         var response = await _httpClient.GetAsync("/api/payment-methods", ct);

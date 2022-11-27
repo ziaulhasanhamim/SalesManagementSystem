@@ -9,6 +9,8 @@ public static class PaymentMethodEndpoints
         app.MapPost("/api/payment-methods", Create).RequireAuthorization();
         app.MapGet("/api/payment-methods", GetAll).RequireAuthorization();
         app.MapGet("/api/payment-methods/{id}", Get).RequireAuthorization();
+        app.MapDelete("/api/payment-methods/{id}", Delete)
+            .RequireAuthorization(options => options.RequireRole(UserRoles.Admin));
     }
 
     public static async ValueTask<IHttpResult> Create(
@@ -52,6 +54,20 @@ public static class PaymentMethodEndpoints
         {
             not null => HttpResults.Ok(paymentMethod),
             null => HttpResults.NotFound()
+        };
+    }
+    public static async Task<IHttpResult> Delete(
+        Guid id,
+        AppDbContext dbContext,
+        CancellationToken ct)
+    {
+        var deleted = await dbContext.PaymentMethods
+            .Where(p => p.Id == id)
+            .ExecuteDeleteAsync(ct);
+        return deleted switch
+        {
+            1 => HttpResults.NoContent(),
+            _ => HttpResults.NotFound()
         };
     }
 }

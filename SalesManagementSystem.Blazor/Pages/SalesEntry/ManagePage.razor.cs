@@ -12,10 +12,13 @@ public sealed partial class ManagePage
     IReadOnlyList<SalesEntryRes> _salesEntries = Array.Empty<SalesEntryRes>();
 
     [Inject]
-    public required SalesEntriesClient SalesEntriesClient { get; set; }
+    public required SalesEntriesClient SalesEntriesClient { get; init; }
 
     [Inject]
-    public required IAuthService AuthService { get; set; }
+    public required IDialogService DialogService { get; init; }
+
+    [Inject]
+    public required IAuthService AuthService { get; init; }
 
     SalesOfType SalesOf
     {
@@ -68,6 +71,28 @@ public sealed partial class ManagePage
             _salesData = salesDataResult.Value;
         }
         _loading = false;
+    }
+
+    async Task ShowDeletePromt(SalesEntryRes salesEntry)
+    {
+        DialogParameters parameters = new()
+        {
+            { "ContentText", "Are you sure you want to delete this?" },
+            { "ButtonText", "Delete" },
+            { "OkButtonColor", Color.Error }
+        };
+        var dialogRef = DialogService.Show<Prompt>("Delete Sales Entry", parameters);
+        var result = await dialogRef.Result;
+        if (result.Cancelled)
+        {
+            return;
+        }
+        var res = await SalesEntriesClient.Delete(salesEntry.Id);
+        if (res.IsFailure)
+        {
+            throw new Exception(res.Error.Message);
+        }
+        await LoadData();
     }
 
     enum SalesOfType

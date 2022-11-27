@@ -1,6 +1,7 @@
+namespace SalesManagementSystem.Server.Endpoints;
+
 using SalesManagementSystem.Contracts.User;
 
-namespace SalesManagementSystem.Server.Endpoints;
 
 public static class UserEndpoints
 {
@@ -12,6 +13,8 @@ public static class UserEndpoints
         app.MapPost("/api/users/", Create)
             .RequireAuthorization(options => options.RequireRole(UserRoles.Admin));
         app.MapGet("/api/users/", GetAll)
+            .RequireAuthorization(options => options.RequireRole(UserRoles.Admin));
+        app.MapDelete("/api/users/{id}", Delete)
             .RequireAuthorization(options => options.RequireRole(UserRoles.Admin));
     }
 
@@ -33,7 +36,7 @@ public static class UserEndpoints
             };
             return HttpHelpers.BadRequest(errors);
         }
-        return Results.Ok(new LoginRes(token, exp));
+        return HttpResults.Ok(new LoginRes(token, exp));
     }
 
     public static async Task<IHttpResult> Create(
@@ -62,7 +65,7 @@ public static class UserEndpoints
         var result = await authService.CreateUser(user, req.Password, ct);
         if (result.Success)
         {
-            return Results.Ok(user.Adapt<UserRes>());
+            return HttpResults.Ok(user.Adapt<UserRes>());
         }
         var errors = mapErrors(result);
         return HttpHelpers.BadRequest(errors);
@@ -110,9 +113,24 @@ public static class UserEndpoints
         }
     }
 
+    public static async Task<IHttpResult> Delete(
+        Guid id,
+        AppDbContext dbContext,
+        CancellationToken ct)
+    {
+        var deleted = await dbContext.Products
+            .Where(p => p.Id == id)
+            .ExecuteDeleteAsync(ct);
+        return deleted switch
+        {
+            1 => HttpResults.NoContent(),
+            _ => HttpResults.NotFound()
+        };
+    }
+
     public static IHttpResult Authorize(HttpContext ctx)
     {
         var user = ctx.User.GetUser();
-        return Results.Ok(user.Adapt<UserRes>());
+        return HttpResults.Ok(user.Adapt<UserRes>());
     }
 }

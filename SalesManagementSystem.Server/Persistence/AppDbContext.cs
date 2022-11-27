@@ -41,6 +41,24 @@ public sealed class AppDbContext : DbContext
 
         builder.Entity<SalesEntry>()
             .HasIndex(s => s.TransactionTime);
+
+        builder.Entity<SalesEntry>()
+            .HasOne(s => s.Product)
+            .WithMany()
+            .HasForeignKey(s => s.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<SalesEntry>()
+            .HasOne(s => s.Customer)
+            .WithMany(c => c.Purchases)
+            .HasForeignKey(s => s.CustomerId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder.Entity<SalesEntry>()
+            .HasOne(s => s.PaymentMethod)
+            .WithMany()
+            .HasForeignKey(s => s.PaymentMethodId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 
     public void Detach<T>(T entity)
