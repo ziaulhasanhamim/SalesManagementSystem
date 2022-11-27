@@ -69,21 +69,21 @@
     </RowTemplate>
 
     <FooterContent>
-        <AuthorizeView Roles="@UserRoles.Admin">
-            <Authorized>
-                <MudTFootRow>
-                    <MudTd colspan="4">
-                        <MudText Color="Color.Info" Typo="Typo.button">Net Sales = @_salesData?.NetSales</MudText>
-                    </MudTd>
+        <MudTFootRow>
+            <MudTd colspan="4">
+                <MudText Color="Color.Info" Typo="Typo.button">Net Sales = @_salesData?.NetSales</MudText>
+            </MudTd>
+            <AuthorizeView Roles="@UserRoles.Admin">
+                <Authorized>
                     <MudTd colspan="4">
                         <MudText Color="Color.Error" Typo="Typo.button">Net Cost = @_salesData?.NetCost</MudText>
                     </MudTd>
                     <MudTd colspan="3">
                         <MudText Color="Color.Success" Typo="Typo.button">Net Profit = @_salesData?.NetProfit</MudText>
                     </MudTd>
-                </MudTFootRow>
-            </Authorized>
-        </AuthorizeView>
+                </Authorized>
+            </AuthorizeView>
+        </MudTFootRow>
     </FooterContent>
     
     <LoadingContent>
