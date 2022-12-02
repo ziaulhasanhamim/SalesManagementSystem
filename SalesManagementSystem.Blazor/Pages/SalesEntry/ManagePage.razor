@@ -56,7 +56,7 @@
         <MudTd DataLabel="Payment Method">@context.PaymentMethod</MudTd>
         <MudTd DataLabel="Customer Name">@context.CustomerName</MudTd>
         <MudTd DataLabel="Customer Number">@context.CustomerPhoneNumber</MudTd>
-        <MudTd DataLabel="Transaction Time">@context.TransactionTime</MudTd>
+        <MudTd DataLabel="Transaction Time">@context.TransactionTime.ToLocalTime()</MudTd>
         <AuthorizeView Roles="@UserRoles.Admin" Context="hide">
             <Authorized>
                 <MudTd>
