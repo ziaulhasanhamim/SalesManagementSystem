@@ -44,13 +44,23 @@ public static class CustomerEndpoints
         await dbContext.AddAsync(customer, ct);
         await dbContext.SaveChangesAsync(ct);
         var uri = $"/api/customer/{customer.Id}";
-        return HttpResults.Created(uri, customer.Adapt<CustomerRes>());
+        return HttpResults.Created(uri, new CustomerRes(
+            customer.Id,
+            customer.Name,
+            customer.PhoneNumber,
+            0
+        ));
     }
 
     public static async Task<IHttpResult> GetAll(AppDbContext dbContext, CancellationToken ct)
     {
         var customers = await dbContext.Customers
-            .ProjectToType<CustomerRes>()
+            .Select(c => new CustomerRes(
+                c.Id,
+                c.Name,
+                c.PhoneNumber,
+                c.Purchases!.Sum(s => s.SoldPrice * s.Quantity)
+            ))
             .ToListAsync(ct);
         return HttpResults.Ok(customers);
     }
@@ -59,7 +69,12 @@ public static class CustomerEndpoints
     {
         var customer = await dbContext.Customers
             .Where(c => c.Id == id)
-            .ProjectToType<CustomerRes>()
+            .Select(c => new CustomerRes(
+                c.Id,
+                c.Name,
+                c.PhoneNumber,
+                c.Purchases!.Sum(s => s.SoldPrice * s.Quantity)
+            ))
             .FirstOrDefaultAsync(ct);
         return customer switch
         {
@@ -92,7 +107,12 @@ public static class CustomerEndpoints
         var customers = await dbContext.Customers
             .WhereIf(!string.IsNullOrEmpty(number), c => EF.Functions.Like(c.PhoneNumber, $"%{number}%"))
             .TakeIfNotNull(count < 1 ? 20 : count)
-            .ProjectToType<CustomerRes>()
+            .Select(c => new CustomerRes(
+                c.Id,
+                c.Name,
+                c.PhoneNumber,
+                c.Purchases!.Sum(s => s.SoldPrice * s.Quantity)
+            ))
             .ToListAsync(ct);
         return HttpResults.Ok(customers);
     }
@@ -106,7 +126,12 @@ public static class CustomerEndpoints
         var takenCustomers = await dbContext.Customers
             .WhereIf(!string.IsNullOrEmpty(name), c => EF.Functions.ILike(c.Name, $"%{name}%"))
             .TakeIfNotNull(count < 1 ? 20 : count)
-            .ProjectToType<CustomerRes>()
+            .Select(c => new CustomerRes(
+                c.Id,
+                c.Name,
+                c.PhoneNumber,
+                c.Purchases!.Sum(s => s.SoldPrice * s.Quantity)
+            ))
             .ToListAsync(ct);
         return HttpResults.Ok(takenCustomers);
     }

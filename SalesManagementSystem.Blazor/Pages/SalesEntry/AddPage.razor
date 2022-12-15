@@ -19,7 +19,7 @@
                         Label="Product" 
                         @bind-Value="_input.Product" 
                         SearchFuncWithCancel="SearchProducts!"
-                        ToStringFunc="p => p!.Name"
+                        ToStringFunc="ProductToString!"
                         ShowProgressIndicator="true"
                         For="() => _input.Product" />
 

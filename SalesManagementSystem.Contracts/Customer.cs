@@ -11,5 +11,6 @@ public sealed record CreateReq(
 public sealed record CustomerRes(
     Guid Id,
     string Name,
-    string PhoneNumber
+    string PhoneNumber,
+    long NetPurchase
 );

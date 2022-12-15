@@ -55,6 +55,8 @@ public sealed partial class AddPage
         await base.OnInitializedAsync();
     }
 
+    string ProductToString(ProductContracts.ProductRes product) => $"{product.Name}(Selling price - {product.SellingPrice}, Stock - {product.StockCount})";
+
     async Task<IEnumerable<ProductContracts.ProductRes>> SearchProducts(string text, CancellationToken ct)
     {
         var apiResult = await ProductsClient.Search(text, 5, ct);

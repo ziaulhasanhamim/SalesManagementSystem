@@ -1,3 +1,5 @@
+using SalesManagementSystem.Contracts.Customer;
+
 namespace SalesManagementSystem.Server;
 
 public static class MapsterConfigurer
