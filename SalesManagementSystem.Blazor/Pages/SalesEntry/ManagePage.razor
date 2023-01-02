@@ -8,8 +8,10 @@
 
 <MudTable Items="_salesEntries" Loading="_loading" CustomFooter="true" Striped="true" Bordered="true">
     <ToolBarContent>
-        <MudIconButton Class="me-1" Link="/sales/add?returnUrl=/sales/" Icon="@Icons.Filled.Add" Variant="Variant.Filled" Color="Color.Primary"></MudIconButton>
-        <MudIconButton OnClick="LoadData" Icon="@Icons.Filled.Refresh" Variant="Variant.Filled" Color="Color.Primary"></MudIconButton>
+        <MudIconButton Class="me-1" Link="/sales/add?returnUrl=/sales/" Icon="@Icons.Filled.Add"
+            Variant="Variant.Filled" Color="Color.Primary"></MudIconButton>
+        <MudIconButton OnClick="LoadData" Icon="@Icons.Filled.Refresh" Variant="Variant.Filled" Color="Color.Primary">
+        </MudIconButton>
         <MudSpacer />
         <MudSelect @bind-Value="SalesOf" Class="mt-0">
             <MudSelectItem Value="SalesOfType.Today">Today's Sales</MudSelectItem>
@@ -20,26 +22,43 @@
         </MudSelect>
     </ToolBarContent>
     <HeaderContent>
-        <MudTh>Id</MudTh>
-        <MudTh>Product</MudTh>
-        <MudTh>Quantity</MudTh>
-        <MudTh>Sold Price</MudTh>
-        <AuthorizeView Roles="@UserRoles.Admin" Context="hide">
-            <Authorized>
-                <MudTh>Buying Price</MudTh>
-                <MudTh>Profit Per Item</MudTh>
-                <MudTh>Profit</MudTh>
-            </Authorized>
-        </AuthorizeView>
-        <MudTh>Payment Method</MudTh>
-        <MudTh>Customer Name</MudTh>
-        <MudTh>Customer Number</MudTh>
-        <MudTh>Transaction Time</MudTh>
-        <AuthorizeView Roles="@UserRoles.Admin" Context="hide">
-            <Authorized>
-                <MudTh></MudTh>
-            </Authorized>
-        </AuthorizeView>
+        <MudTHeadRow>
+            <MudTd colspan="4">
+                <MudText Color="Color.Info" Typo="Typo.button">Net Sales = @_salesData?.NetSales</MudText>
+            </MudTd>
+            <AuthorizeView Roles="@UserRoles.Admin">
+                <Authorized>
+                    <MudTd colspan="4">
+                        <MudText Color="Color.Error" Typo="Typo.button">Net Cost = @_salesData?.NetCost</MudText>
+                    </MudTd>
+                    <MudTd colspan="3">
+                        <MudText Color="Color.Success" Typo="Typo.button">Net Profit = @_salesData?.NetProfit</MudText>
+                    </MudTd>
+                </Authorized>
+            </AuthorizeView>
+        </MudTHeadRow>
+        <MudTHeadRow>
+            <MudTh>Id</MudTh>
+            <MudTh>Product</MudTh>
+            <MudTh>Quantity</MudTh>
+            <MudTh>Sold Price</MudTh>
+            <AuthorizeView Roles="@UserRoles.Admin" Context="hide">
+                <Authorized>
+                    <MudTh>Buying Price</MudTh>
+                    <MudTh>Profit Per Item</MudTh>
+                    <MudTh>Profit</MudTh>
+                </Authorized>
+            </AuthorizeView>
+            <MudTh>Payment Method</MudTh>
+            <MudTh>Customer Name</MudTh>
+            <MudTh>Customer Number</MudTh>
+            <MudTh>Transaction Time</MudTh>
+            <AuthorizeView Roles="@UserRoles.Admin" Context="hide">
+                <Authorized>
+                    <MudTh></MudTh>
+                </Authorized>
+            </AuthorizeView>
+        </MudTHeadRow>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Id" style="overflow: hidden;">@context.Id</MudTd>
@@ -69,25 +88,11 @@
     </RowTemplate>
 
     <FooterContent>
-        <MudTFootRow>
-            <MudTd colspan="4">
-                <MudText Color="Color.Info" Typo="Typo.button">Net Sales = @_salesData?.NetSales</MudText>
-            </MudTd>
-            <AuthorizeView Roles="@UserRoles.Admin">
-                <Authorized>
-                    <MudTd colspan="4">
-                        <MudText Color="Color.Error" Typo="Typo.button">Net Cost = @_salesData?.NetCost</MudText>
-                    </MudTd>
-                    <MudTd colspan="3">
-                        <MudText Color="Color.Success" Typo="Typo.button">Net Profit = @_salesData?.NetProfit</MudText>
-                    </MudTd>
-                </Authorized>
-            </AuthorizeView>
-        </MudTFootRow>
+
     </FooterContent>
-    
+
     <LoadingContent>
-        <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true"/>
+        <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
     </LoadingContent>
 
     <NoRecordsContent>
