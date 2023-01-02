@@ -6,6 +6,18 @@
 <MudText Typo="Typo.h4">Manage Sales</MudText>
 <MudSpacer />
 
+<MudCard>
+    <MudCardContent>
+        <MudText Color="Color.Info" Typo="Typo.h6" Class="me-1">Net Sales = @_salesData?.NetSales</MudText>
+        <AuthorizeView Roles="@UserRoles.Admin">
+            <Authorized>
+                <MudText Color="Color.Error" Typo="Typo.h6" Class="me-1">Net Cost = @_salesData?.NetCost</MudText>
+                <MudText Color="Color.Success" Typo="Typo.h6" Class="me-1">Net Profit = @_salesData?.NetProfit</MudText>
+            </Authorized>
+        </AuthorizeView>
+    </MudCardContent>
+</MudCard>
+
 <MudTable Items="_salesEntries" Loading="_loading" CustomFooter="true" Striped="true" Bordered="true">
     <ToolBarContent>
         <MudIconButton Class="me-1" Link="/sales/add?returnUrl=/sales/" Icon="@Icons.Filled.Add"
@@ -22,43 +34,26 @@
         </MudSelect>
     </ToolBarContent>
     <HeaderContent>
-        <MudTHeadRow>
-            <MudTd colspan="4">
-                <MudText Color="Color.Info" Typo="Typo.button">Net Sales = @_salesData?.NetSales</MudText>
-            </MudTd>
-            <AuthorizeView Roles="@UserRoles.Admin">
-                <Authorized>
-                    <MudTd colspan="4">
-                        <MudText Color="Color.Error" Typo="Typo.button">Net Cost = @_salesData?.NetCost</MudText>
-                    </MudTd>
-                    <MudTd colspan="3">
-                        <MudText Color="Color.Success" Typo="Typo.button">Net Profit = @_salesData?.NetProfit</MudText>
-                    </MudTd>
-                </Authorized>
-            </AuthorizeView>
-        </MudTHeadRow>
-        <MudTHeadRow>
-            <MudTh>Id</MudTh>
-            <MudTh>Product</MudTh>
-            <MudTh>Quantity</MudTh>
-            <MudTh>Sold Price</MudTh>
-            <AuthorizeView Roles="@UserRoles.Admin" Context="hide">
-                <Authorized>
-                    <MudTh>Buying Price</MudTh>
-                    <MudTh>Profit Per Item</MudTh>
-                    <MudTh>Profit</MudTh>
-                </Authorized>
-            </AuthorizeView>
-            <MudTh>Payment Method</MudTh>
-            <MudTh>Customer Name</MudTh>
-            <MudTh>Customer Number</MudTh>
-            <MudTh>Transaction Time</MudTh>
-            <AuthorizeView Roles="@UserRoles.Admin" Context="hide">
-                <Authorized>
-                    <MudTh></MudTh>
-                </Authorized>
-            </AuthorizeView>
-        </MudTHeadRow>
+        <MudTh>Id</MudTh>
+        <MudTh>Product</MudTh>
+        <MudTh>Quantity</MudTh>
+        <MudTh>Sold Price</MudTh>
+        <AuthorizeView Roles="@UserRoles.Admin" Context="hide">
+            <Authorized>
+                <MudTh>Buying Price</MudTh>
+                <MudTh>Profit Per Item</MudTh>
+                <MudTh>Profit</MudTh>
+            </Authorized>
+        </AuthorizeView>
+        <MudTh>Payment Method</MudTh>
+        <MudTh>Customer Name</MudTh>
+        <MudTh>Customer Number</MudTh>
+        <MudTh>Transaction Time</MudTh>
+        <AuthorizeView Roles="@UserRoles.Admin" Context="hide">
+            <Authorized>
+                <MudTh></MudTh>
+            </Authorized>
+        </AuthorizeView>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Id" style="overflow: hidden;">@context.Id</MudTd>
