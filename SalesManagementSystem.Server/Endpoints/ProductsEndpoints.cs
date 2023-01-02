@@ -16,7 +16,10 @@ public static class ProductEndpoints
         app.MapDelete("/api/products/{id}", Delete)
             .RequireAuthorization(options => options.RequireRole(UserRoles.Admin));
         app.MapGet("/api/products/search/{text?}", Search).RequireAuthorization();
+        app.MapGet("/api/products/search-sellables/{text?}", SearchSellables).RequireAuthorization();
         app.MapPost("/api/products/incement-stock", IncrementStock).RequireAuthorization();
+        app.MapPost("/api/products/change-deprecation-state", ChangeDeprecationState)
+            .RequireAuthorization(options => options.RequireRole(UserRoles.Admin));
     }
 
     public static async ValueTask<IHttpResult> Create(
@@ -35,14 +38,6 @@ public static class ProductEndpoints
             return HttpHelpers.BadRequest(errors);
         }
         var product = req.Adapt<Product>();
-        if (await product.IsNameDuplicate(dbContext, ct))
-        {
-            Dictionary<string, IEnumerable<string>> errors = new()
-            {
-                [nameof(CreateReq.Name)] = new[] { "A product with same name exists" }
-            };
-            return HttpHelpers.BadRequest(errors);
-        }
         await dbContext.AddAsync(product, ct);
         await dbContext.SaveChangesAsync(ct);
         var res = new ProductRes(
@@ -50,7 +45,8 @@ public static class ProductEndpoints
             product.Name,
             product.BuyingPrice,
             product.SellingPrice,
-            product.StockCount
+            product.StockCount,
+            product.IsDeprecated
         );
         var uri = $"/api/products/{product.Id}";
         return HttpResults.Created(uri, res);
@@ -68,7 +64,8 @@ public static class ProductEndpoints
                 p.Name,
                 isAdmin ? p.BuyingPrice : default,
                 p.SellingPrice,
-                p.StockCount
+                p.StockCount,
+                p.IsDeprecated
             ))
             .ToListAsync(ct);
         return HttpResults.Ok(products);
@@ -88,7 +85,8 @@ public static class ProductEndpoints
                 p.Name,
                 isAdmin ? p.BuyingPrice : default,
                 p.SellingPrice,
-                p.StockCount
+                p.StockCount,
+                p.IsDeprecated
             ))
             .FirstOrDefaultAsync(ct);
         return product switch
@@ -131,7 +129,34 @@ public static class ProductEndpoints
                 p.Name,
                 isAdmin ? p.BuyingPrice : default,
                 p.SellingPrice,
-                p.StockCount
+                p.StockCount,
+                p.IsDeprecated
+            ))
+            .ToListAsync(ct);
+        return HttpResults.Ok(products);
+    }
+
+    public static async Task<IHttpResult> SearchSellables(
+        string? text,
+        HttpContext ctx,
+        AppDbContext dbContext,
+        CancellationToken ct,
+        int? count)
+    {
+        var isAdmin = ctx.User.HasClaim(ClaimTypes.Role, UserRoles.Admin);
+        var products = await dbContext.Products
+            .Where(p => !p.IsDeprecated)
+            .WhereIf(
+                !string.IsNullOrEmpty(text),
+                p => EF.Functions.ILike(p.Name, $"%{text}%"))
+            .TakeIfNotNull(count < 1 ? 20 : count)
+            .Select(p => new ProductRes(
+                p.Id,
+                p.Name,
+                isAdmin ? p.BuyingPrice : default,
+                p.SellingPrice,
+                p.StockCount,
+                p.IsDeprecated
             ))
             .ToListAsync(ct);
         return HttpResults.Ok(products);
@@ -150,6 +175,31 @@ public static class ProductEndpoints
                 s => s.SetProperty(
                     p => p.StockCount,
                     p => p.StockCount + req.StockCount),
+                ct);
+        if (updateCount is not 1)
+        {
+            Dictionary<string, IEnumerable<string>> errors = new()
+            {
+                [nameof(req.Id)] = new[] { "Product id not found" }
+            };
+            return HttpHelpers.BadRequest(errors);
+        }
+        return HttpResults.Ok();
+    }
+
+    public static async Task<IHttpResult> ChangeDeprecationState(
+        ChangeDeprecationStateReq req, AppDbContext dbContext, CancellationToken ct)
+    {
+        if (!MiniValidator.TryValidate(req, out var vErrors))
+        {
+            return HttpHelpers.BadRequest(vErrors);
+        }
+        var updateCount = await dbContext.Products
+            .Where(p => p.Id == req.Id)
+            .ExecuteUpdateAsync(
+                s => s.SetProperty(
+                    p => p.IsDeprecated,
+                    _ => req.IsDeprecated),
                 ct);
         if (updateCount is not 1)
         {

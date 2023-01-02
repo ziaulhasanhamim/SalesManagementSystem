@@ -75,6 +75,16 @@ public sealed partial class ManagePage
         await LoadData();
     }
 
+    async Task ToggleDeprecateState(ProductRes product)
+    {
+        var result = await ProductsClient.ChangeDeprecationState(new(product.Id, !product.IsDeprecated));
+        if (result.IsFailure)
+        {
+            throw new Exception(result.Error.Message);
+        }
+        await LoadData();
+    }
+
     async Task ShowDeletePromt(ProductRes product)
     {
         DialogParameters parameters = new()

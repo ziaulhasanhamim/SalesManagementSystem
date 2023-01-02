@@ -2,7 +2,6 @@ namespace SalesManagementSystem.Server.Persistence.Entities;
 
 using System.ComponentModel.DataAnnotations;
 
-[Index(nameof(Name))]
 public sealed class Product
 {
     [Key]
@@ -20,8 +19,8 @@ public sealed class Product
     [Required]
     public int StockCount { get; private set; }
 
-    public Task<bool> IsNameDuplicate(AppDbContext dbContext, CancellationToken ct = default) =>
-        dbContext.Products.AnyAsync(p => EF.Functions.ILike(p.Name, Name), ct);
+    [Required]
+    public bool IsDeprecated { get; set; }
 
     public bool TryRemoveStock(int count)
     {

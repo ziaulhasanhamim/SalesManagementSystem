@@ -14,10 +14,16 @@ public sealed record ProductRes(
     string Name,
     int BuyingPrice,
     int SellingPrice,
-    int StockCount
+    int StockCount,
+    bool IsDeprecated
 );
 
 public sealed record StockIncrementReq(
     [property: Required] Guid Id,
     [property: Required, Range(1, int.MaxValue)] int StockCount
+);
+
+public sealed record ChangeDeprecationStateReq(
+    [property: Required] Guid Id,
+    [property: Required] bool IsDeprecated
 );

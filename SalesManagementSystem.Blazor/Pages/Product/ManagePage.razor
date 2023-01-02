@@ -24,10 +24,12 @@
         </AuthorizeView>
         <MudTh>Selling Price</MudTh>
         <MudTh>Stock Count</MudTh>
+        <MudTh>Sellable</MudTh>
         <MudTh></MudTh>
         <AuthorizeView Roles="@UserRoles.Admin" Context="hide">
             <Authorized>
-            <MudTh></MudTh>
+                <MudTh></MudTh>
+                <MudTh></MudTh>
             </Authorized>
         </AuthorizeView>
     </HeaderContent>
@@ -41,6 +43,16 @@
         </AuthorizeView>
         <MudTd DataLabel="Selling Price">@context.SellingPrice</MudTd>
         <MudTd DataLabel="Stock Count">@context.StockCount</MudTd>
+        <MudTd DataLabel="Sellable">
+            @if (context.IsDeprecated)
+            {
+                <MudIcon Icon="@Icons.Filled.Close" Variant="Variant.Filled" Color="Color.Error" />
+            }
+            else
+            {
+                <MudIcon Icon="@Icons.Filled.Check" Variant="Variant.Filled" Color="Color.Primary" />
+            }
+        </MudTd>
         <MudTd>
             <MudButton @onclick="() => ShowStockIncementDialog(context)" Variant="Variant.Filled" Color="Color.Primary">
                 Add Stock
@@ -48,6 +60,11 @@
         </MudTd>
         <AuthorizeView Roles="@UserRoles.Admin" Context="hide">
             <Authorized>
+                <MudTd>
+                    <MudButton @onclick="() => ToggleDeprecateState(context)" Variant="Variant.Filled" Color="Color.Default">
+                        @(context.IsDeprecated ? "Undepreciate" : "Deprecate")
+                    </MudButton>
+                </MudTd>
                 <MudTd>
                     <MudButton @onclick="() => ShowDeletePromt(context)" Variant="Variant.Filled" Color="Color.Error">
                         Delete

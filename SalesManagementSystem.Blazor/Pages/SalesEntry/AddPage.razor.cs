@@ -59,7 +59,7 @@ public sealed partial class AddPage
 
     async Task<IEnumerable<ProductContracts.ProductRes>> SearchProducts(string text, CancellationToken ct)
     {
-        var apiResult = await ProductsClient.Search(text, 5, ct);
+        var apiResult = await ProductsClient.SearchSellable(text, 5, ct);
         if (apiResult.IsFailure)
         {
             throw new Exception(apiResult.Error.Message);

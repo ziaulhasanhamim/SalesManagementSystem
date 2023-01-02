@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SalesManagementSystem.Server.Persistence;
@@ -11,9 +12,11 @@ using SalesManagementSystem.Server.Persistence;
 namespace SalesManagementSystem.Server.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230102125310_UpdateIndex")]
+    partial class UpdateIndex
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -78,7 +81,7 @@ namespace SalesManagementSystem.Server.Persistence.Migrations
                     b.Property<int>("BuyingPrice")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsDeprecated")
+                    b.Property<bool>("IsDepricated")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
