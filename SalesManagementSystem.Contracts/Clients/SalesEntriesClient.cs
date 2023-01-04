@@ -2,6 +2,7 @@ namespace SalesManagementSystem.Contracts.Clients;
 
 using System.Net;
 using SalesManagementSystem.Contracts.SalesEntry;
+using SalesManagementSystem.Contracts.ValueObjects;
 
 public sealed class SalesEntriesClient
 {
@@ -49,11 +50,10 @@ public sealed class SalesEntriesClient
     }
 
     public async Task<Result<IReadOnlyList<SalesEntryRes>>> GetSales(
-        uint? days = null,
+        SalesTimeRange salesTimeRange,
         CancellationToken ct = default)
     {
-        DateTime? dt = days is uint val ? DateTime.Now.Date.AddDays((val - 1) * -1) : null;
-        var dtUtc = dt?.ToUniversalTime();
+        DateTime? dtUtc = salesTimeRange.GetDateTime();
         var response = await _httpClient.GetAsync($"/api/sales/{dtUtc:s}", ct);
         if (response.IsSuccessStatusCode)
         {
@@ -70,11 +70,10 @@ public sealed class SalesEntriesClient
     }
 
     public async Task<Result<SalesDataRes>> GetSalesData(
-        uint? days = null,
+        SalesTimeRange salesTimeRange,
         CancellationToken ct = default)
     {
-        DateTime? dt = days is uint val ? DateTime.Now.Date.AddDays((val - 1) * -1) : null;
-        var dtUtc = dt?.ToUniversalTime();
+        DateTime? dtUtc = salesTimeRange.GetDateTime();
         var response = await _httpClient.GetAsync($"/api/sales-data/{dtUtc:s}", ct);
         if (response.IsSuccessStatusCode)
         {

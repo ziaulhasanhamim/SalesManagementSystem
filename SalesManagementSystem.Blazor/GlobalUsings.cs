@@ -2,6 +2,7 @@ global using BetterErrors;
 global using Nopen.NET;
 global using SalesManagementSystem.Contracts.Clients;
 global using SalesManagementSystem.Contracts;
+global using SalesManagementSystem.Contracts.ValueObjects;
 global using System.ComponentModel.DataAnnotations;
 global using Microsoft.AspNetCore.Components.Web;
 global using Microsoft.AspNetCore.Components;

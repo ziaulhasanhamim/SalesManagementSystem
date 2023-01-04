@@ -25,12 +25,13 @@
         <MudIconButton OnClick="LoadData" Icon="@Icons.Filled.Refresh" Variant="Variant.Filled" Color="Color.Primary">
         </MudIconButton>
         <MudSpacer />
-        <MudSelect @bind-Value="SalesOf" Class="mt-0">
-            <MudSelectItem Value="SalesOfType.Today">Today's Sales</MudSelectItem>
-            <MudSelectItem Value="SalesOfType.ThisWeek">This week's sales</MudSelectItem>
-            <MudSelectItem Value="SalesOfType.ThisMonth">This month's sales</MudSelectItem>
-            <MudSelectItem Value="SalesOfType.ThisYear">This year's sales</MudSelectItem>
-            <MudSelectItem Value="SalesOfType.All">All sales</MudSelectItem>
+        <MudSelect @bind-Value="SalesTimeRange" Class="mt-0">
+            <MudSelectItem Value="SalesTimeRange.Today">Today's Sales</MudSelectItem>
+            <MudSelectItem Value="SalesTimeRange.Last7Days">Last 7 days' Sales</MudSelectItem>
+            <MudSelectItem Value="SalesTimeRange.Last30Days">Last 30 days' Sales</MudSelectItem>
+            <MudSelectItem Value="SalesTimeRange.ThisMonth">This month's sales</MudSelectItem>
+            <MudSelectItem Value="SalesTimeRange.ThisYear">This year's sales</MudSelectItem>
+            <MudSelectItem Value="SalesTimeRange.All">All sales</MudSelectItem>
         </MudSelect>
     </ToolBarContent>
     <HeaderContent>

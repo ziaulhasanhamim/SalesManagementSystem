@@ -7,7 +7,7 @@ public sealed partial class ManagePage
     SalesDataRes? _salesData;
     bool _loading = true;
 
-    SalesOfType _salesOf = SalesOfType.Today;
+    SalesTimeRange _salesTimeRange = SalesTimeRange.Today;
 
     IReadOnlyList<SalesEntryRes> _salesEntries = Array.Empty<SalesEntryRes>();
 
@@ -20,24 +20,15 @@ public sealed partial class ManagePage
     [Inject]
     public required IAuthService AuthService { get; init; }
 
-    SalesOfType SalesOf
+    SalesTimeRange SalesTimeRange
     {
-        get => _salesOf;
+        get => _salesTimeRange;
         set
         {
-            _salesOf = value;
-            SalesOfChanged();
+            _salesTimeRange = value;
+            SalesTimeRangeChanged();
         }
     }
-
-    uint? Days => SalesOf switch
-    {
-        SalesOfType.Today => 1,
-        SalesOfType.ThisWeek => 7,
-        SalesOfType.ThisMonth => 30,
-        SalesOfType.ThisYear => 365,
-        _ => null,
-    };
 
     protected override async Task OnInitializedAsync()
     {
@@ -45,7 +36,7 @@ public sealed partial class ManagePage
         await base.OnInitializedAsync();
     }
 
-    async void SalesOfChanged()
+    async void SalesTimeRangeChanged()
     {
         await LoadData();
         StateHasChanged();
@@ -55,13 +46,13 @@ public sealed partial class ManagePage
     {
         _loading = true;
         StateHasChanged();
-        var salesResult = await SalesEntriesClient.GetSales(Days);
+        var salesResult = await SalesEntriesClient.GetSales(SalesTimeRange);
         if (salesResult.IsFailure)
         {
             throw new Exception(salesResult.Error.Message);
         }
         _salesEntries = salesResult.Value;
-        var salesDataResult = await SalesEntriesClient.GetSalesData(Days);
+        var salesDataResult = await SalesEntriesClient.GetSalesData(SalesTimeRange);
         if (salesDataResult.IsFailure)
         {
             throw new Exception(salesDataResult.Error.Message);
@@ -90,10 +81,5 @@ public sealed partial class ManagePage
             throw new Exception(res.Error.Message);
         }
         await LoadData();
-    }
-
-    enum SalesOfType
-    {
-        Today, ThisWeek, ThisMonth, ThisYear, All
     }
 }
