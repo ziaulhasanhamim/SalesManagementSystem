@@ -118,7 +118,7 @@ public static class UserEndpoints
         AppDbContext dbContext,
         CancellationToken ct)
     {
-        var deleted = await dbContext.Products
+        var deleted = await dbContext.Users
             .Where(p => p.Id == id)
             .ExecuteDeleteAsync(ct);
         return deleted switch
